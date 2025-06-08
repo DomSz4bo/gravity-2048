@@ -11,7 +11,7 @@ public class GamePane extends Pane {
     public GamePane(ViewManager viewManager) {
         super();
         this.viewManager = viewManager;
-        setBackground(Background.fill(Color.BLACK));
+        setBackground(Background.fill(Color.web("#0D2857")));
     }
 
     public void loadGame(GameState gameState) {

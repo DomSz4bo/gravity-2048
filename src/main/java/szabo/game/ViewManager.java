@@ -1,6 +1,5 @@
 package szabo.game;
 
-import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 
 public class ViewManager extends StackPane {
@@ -23,12 +22,12 @@ public class ViewManager extends StackPane {
         gamePane.setVisible(false);
     }
 
-    public void resize() {
-        if (menuPane.visibleProperty().get()) {
-        }
-        if (gamePane.visibleProperty().get()) {
-
-        }
-
+    public MenuPane getMenuPane() {
+        return menuPane;
     }
+
+    public GamePane getGamePane() {
+        return gamePane;
+    }
+
 }

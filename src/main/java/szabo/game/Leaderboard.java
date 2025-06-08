@@ -25,7 +25,7 @@ public class Leaderboard extends BorderPane {
     public Leaderboard() {
         loadEntries();
         updateLeaderboard();
-        entryHolder.setAlignment(Pos.TOP_CENTER);
+        entryHolder.setAlignment(Pos.CENTER);
         setCenter(entryHolder);
 
         Button closeButton = new Button("Close");
@@ -44,18 +44,24 @@ public class Leaderboard extends BorderPane {
                 widthProperty(), heightProperty()
         );
 
-        paddingProperty().bind(Bindings.createObjectBinding(
-                () -> new Insets(minDimension.get() / 20),
-                widthProperty(), heightProperty()
-        ));
-
         entryHolder.spacingProperty().bind(minDimension.divide(60));
+        entryHolder.paddingProperty().bind(Bindings.createObjectBinding(
+                () -> {
+                    double horizontalPadding = entryHolder.getWidth() / 30;
+                    return new Insets(0, horizontalPadding, 0, horizontalPadding);
+                },
+                entryHolder.widthProperty()
+        ));
+//        entryHolder.setBackground(Background.fill(Color.LIGHTBLUE));
+
         leaderboardLabel.prefHeightProperty().bind(heightProperty().multiply(0.15));
         leaderboardLabel.fontProperty().bind(Bindings.createObjectBinding(
-                () -> Font.font(minDimension.get() / 20), minDimension
+                () -> Font.font(Math.max(20, minDimension.get() / 15)), minDimension
         ));
 //        leaderboardLabel.setBackground(Background.fill(Color.LIGHTGRAY));
-        btnPane.prefHeightProperty().bind(heightProperty().multiply(0.15));
+
+        btnPane.prefHeightProperty().bind(heightProperty().multiply(0.1));
+//        btnPane.setBackground(Background.fill(Color.LIGHTGRAY));
         closeButton.paddingProperty().bind(Bindings.createObjectBinding(
                 () -> {
                     double verticalPadding = minDimension.get() / 20;
@@ -66,7 +72,9 @@ public class Leaderboard extends BorderPane {
                 minDimension
         ));
         closeButton.fontProperty().bind(Bindings.createObjectBinding(
-                () -> Font.font(minDimension.get() / 35),
+                () -> {
+//                    System.out.println("close font"+minDimension.get()/30);
+                    return Font.font(Math.max(14, minDimension.get() / 30));},
                 minDimension
         ));
 
@@ -87,6 +95,10 @@ public class Leaderboard extends BorderPane {
     private void updateLeaderboard() {
         entryHolder.getChildren().clear();
         entryHolder.getChildren().addAll(entries);
+        for (int i = 0; i < entries.size(); i++) {
+            var entry = entries.get(i);
+            entry.setPosition(i + 1);
+        }
     }
 
     private void insertEntry(LeaderboardEntry entry) {
@@ -116,6 +128,7 @@ public class Leaderboard extends BorderPane {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("Loaded " + entries.size() + " entries");
         if (entries.size() > LIMIT) {
             throw new IllegalStateException("Too many entries");
         }
@@ -135,6 +148,8 @@ public class Leaderboard extends BorderPane {
     private static class LeaderboardEntry extends HBox {
         private final String name;
         private final int score;
+        private final Label nameLabel;
+        private int position;
 
         public LeaderboardEntry(String name, int score, Pane holder) {
             super();
@@ -146,13 +161,19 @@ public class Leaderboard extends BorderPane {
             setHgrow(spacer, Priority.ALWAYS);
             getChildren().addAll(nameLabel, spacer, scoreLabel);
             nameLabel.fontProperty().bind(Bindings.createObjectBinding(
-                    () -> Font.font(Math.min(holder.getWidth(), holder.getHeight()) / 30 ),
-                    holder.widthProperty(), holder.heightProperty()
+                    () -> Font.font(holder.getHeight() / 22),
+                    holder.heightProperty()
             ));
             scoreLabel.fontProperty().bind(Bindings.createObjectBinding(
-                    () -> Font.font(Math.min(holder.getWidth(), holder.getHeight()) / 30 ),
-                    holder.widthProperty(), holder.heightProperty()
+                    () -> Font.font(holder.getHeight() / 22),
+                    holder.heightProperty()
             ));
+            this.nameLabel = nameLabel;
+        }
+
+        private void setPosition(int position) {
+            this.position = position;
+            nameLabel.setText(position + ". " + name);
         }
 
         @Override
