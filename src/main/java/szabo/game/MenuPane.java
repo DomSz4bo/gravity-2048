@@ -9,20 +9,19 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 
 public class MenuPane extends VBox {
-    private ImageView titleImage = new ImageView();
-
-    private VBox buttonContainer = new VBox();
-    private Button playButton =  new Button("Play");
-    private Button exitButton  =  new Button("Exit");
-    private Button newGameButton =  new Button("New Game");
-    private Button leaderboardButton =  new Button("Leaderboard");
 
     public MenuPane(AppManager appManager) {
         super();
 //        setBackground(Background.fill(Color.web("#070F33")));
+
+        Button playButton = new Button("Play");
+        Button newGameButton = new Button("New Game");
+        Button leaderboardButton = new Button("Leaderboard");
+        Button exitButton = new Button("Exit");
+        VBox buttonContainer = new VBox();
+        ImageView titleImage = new ImageView();
 
         playButton.setOnAction(e -> appManager.showGame());
         newGameButton.setOnAction(e -> appManager.showGame());
@@ -52,8 +51,9 @@ public class MenuPane extends VBox {
         buttonContainer.spacingProperty().bind(minDimension.divide(50));
         for (Node node : buttonContainer.getChildren()) {
             Button btn = (Button) node;
-            btn.fontProperty().bind(Bindings.createObjectBinding(
-                    () -> Font.font(Math.max(minDimension.get() / 35, 14)), minDimension
+            btn.styleProperty().bind(Bindings.createStringBinding(
+                    () -> String.format("-fx-font-size: %.2fpx;", Math.max(minDimension.get() / 35, 14)),
+                    minDimension
             ));
             btn.paddingProperty().bind(Bindings.createObjectBinding(
                     () -> {

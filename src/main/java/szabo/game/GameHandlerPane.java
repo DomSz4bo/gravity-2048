@@ -1,5 +1,6 @@
 package szabo.game;
 
+import javafx.beans.binding.Bindings;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -7,8 +8,8 @@ import javafx.scene.paint.Color;
 public class GameHandlerPane extends StackPane {
     private static final double WIDTH_TO_HEIGHT_RATIO = 0.5;
 
-    private AppManager appManager;
-    private GamePane gamePane;
+    private final AppManager appManager;
+    private final GamePane gamePane;
 
     public GameHandlerPane(AppManager appManager) {
         super();
@@ -19,17 +20,10 @@ public class GameHandlerPane extends StackPane {
 
 //        DoubleBinding gameWidth
 
-//        gamePane.maxWidthProperty().bind(widthProperty().divide(2));
-
-        double width = getWidth();
-        double height = getHeight();
-
-        double gameWidth = (height * WIDTH_TO_HEIGHT_RATIO);
-        double gameHeight = height;
-        if (gameWidth > width) {
-            gameWidth = width;
-            gameHeight = width * 2;
-        }
+        gamePane.maxWidthProperty().bind(Bindings.createDoubleBinding(
+                () -> Math.min(getWidth(), getHeight() * WIDTH_TO_HEIGHT_RATIO),
+                widthProperty(), heightProperty()
+        ));
     }
 
     public void loadGame(GameState gameState) {

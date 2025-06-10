@@ -15,7 +15,6 @@ public class Leaderboard {
 
     public Leaderboard() {
         loadEntries();
-
     }
 
     public List<ScoreEntry> getScores() {
@@ -83,7 +82,7 @@ public class Leaderboard {
     }
 
     public record ScoreEntry(String name, int score) {
-        private static final int MAX_USERNAME_LENGTH = 12;
+        private static final int MAX_USERNAME_LENGTH = 15;
 
         public ScoreEntry {
             Objects.requireNonNull(name);

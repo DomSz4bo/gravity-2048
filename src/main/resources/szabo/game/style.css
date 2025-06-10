@@ -7,5 +7,40 @@
 }
 
 /*.score-list {*/
-/*    -fx-background-color: black;*/
+/*    -fx-text-fill: white;*/
 /*}*/
+
+.button {
+    -fx-text-fill: #0c2552;
+    -fx-font-family: "Arial Rounded MT Bold";
+
+    -fx-background-color: rgba(255, 255, 255, 0.75);
+    -fx-background-radius: 30;
+    /*-fx-background-insets: 0, 1;*/
+
+    /*-fx-border-color: #ff8d00;*/
+    /*-fx-border-radius: 30;*/
+    /*-fx-border-width: 2;*/
+}
+
+.button:hover {
+    -fx-background-color: rgb(255, 255, 255);
+    -fx-text-fill: black;
+}
+
+.label {
+    -fx-text-fill: #ffffff;
+    -fx-font-family: "Cascadia Mono";
+}
+
+.label.rank_1 {
+    -fx-text-fill: gold;
+}
+
+.label.rank_2 {
+    -fx-text-fill: silver;
+}
+
+.label.rank_3 {
+    -fx-text-fill: #CD7F32;
+}

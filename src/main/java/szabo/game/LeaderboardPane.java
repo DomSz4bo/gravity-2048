@@ -1,5 +1,6 @@
 package szabo.game;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Insets;
@@ -34,7 +35,13 @@ public class LeaderboardPane extends BorderPane {
 
         scoreList.setAlignment(Pos.CENTER);
         scoreList.setSpacing(10);
-        scoreList.setPadding(new Insets(10));
+        scoreList.paddingProperty().bind(Bindings.createObjectBinding(
+                () -> {
+                    double horizontalPadding = getWidth() / 20;
+                    return new Insets(0, horizontalPadding, 0, horizontalPadding);
+                },
+                widthProperty()
+        ));
 //        scoreList.getStyleClass().add("score-list");
         ScrollPane scrollPane = new ScrollPane(scoreList);
         scrollPane.setFitToWidth(true);
@@ -47,8 +54,8 @@ public class LeaderboardPane extends BorderPane {
                 widthProperty(), heightProperty()
         );
 
+
         title.prefHeightProperty().bind(heightProperty().multiply(0.15));
-        bindFontSizeToMinDimension(title, 20, 15);
 //        title.setBackground(Background.fill(Color.LIGHTGRAY));
 
         btnPane.prefHeightProperty().bind(heightProperty().multiply(0.1));
@@ -62,7 +69,12 @@ public class LeaderboardPane extends BorderPane {
                 },
                 minDimension
         ));
-        bindFontSizeToMinDimension(closeButton, 14, 30);
+
+        Platform.runLater(() -> {
+            bindFontSizeToMinDimension(title, 20, 15);
+            bindFontSizeToMinDimension(closeButton, 14, 30);
+        });
+
 
         loadLeaderboard();
     }
@@ -72,25 +84,7 @@ public class LeaderboardPane extends BorderPane {
 
         for (int i = 0; i < entries.size(); i++) {
             Leaderboard.ScoreEntry entry = entries.get(i);
-            Label rank = new Label((i + 1) + ".");
-            Label name = new Label(entry.name());
-            Label score = new Label(String.valueOf(entry.score()));
-
-            bindFontSizeToMinDimension(rank, 14, 30);
-            bindFontSizeToMinDimension(name, 14, 30);
-            bindFontSizeToMinDimension(score, 14, 30);
-
-            HBox row = new HBox(10, rank, name, score);
-            row.setAlignment(Pos.CENTER);
-            row.setMaxWidth(Double.MAX_VALUE);
-
-            HBox.setHgrow(name, Priority.ALWAYS);
-            name.setMaxWidth(Double.MAX_VALUE);
-            name.setAlignment(Pos.CENTER_LEFT);
-            score.setAlignment(Pos.CENTER_RIGHT);
-            score.setMinWidth(60);
-
-            scoreList.getChildren().add(row);
+            scoreList.getChildren().add(new LeaderboardPaneEntry(entry, i + 1));
         }
     }
 
@@ -98,9 +92,48 @@ public class LeaderboardPane extends BorderPane {
         if (minimum <= 0) {
             throw new IllegalArgumentException("minimum must be greater than 0");
         }
+//        System.out.println(element.getFont().getFamily());
+        var currentFont = element.getFont();
         element.fontProperty().bind(Bindings.createObjectBinding(
-                () -> Font.font(Math.max(minimum, minDimension.get() / divFactor)), minDimension
+                () -> Font.font(currentFont.getFamily(), Math.max(minimum, minDimension.get() / divFactor)),
+                minDimension
         ));
+    }
+
+    private class LeaderboardPaneEntry extends HBox {
+
+        public LeaderboardPaneEntry(Leaderboard.ScoreEntry entry, int rank) {
+            super(10);
+            var rankLabel = new Label(rank + ".");
+            var nameLabel = new Label(entry.name());
+            var scoreLabel = new Label(String.valueOf(entry.score()));
+            getChildren().addAll(rankLabel, nameLabel, scoreLabel);
+
+            Platform.runLater(() -> {
+                bindFontSizeToMinDimension(rankLabel, 14, 30);
+                bindFontSizeToMinDimension(nameLabel, 14, 30);
+                bindFontSizeToMinDimension(scoreLabel, 14, 30);
+            });
+
+
+            HBox.setHgrow(nameLabel, Priority.ALWAYS);
+            nameLabel.setMaxWidth(Double.MAX_VALUE);
+            nameLabel.setAlignment(Pos.CENTER_LEFT);
+            scoreLabel.setAlignment(Pos.CENTER_RIGHT);
+            scoreLabel.setMinWidth(60);
+
+            addStyleClassToChildren("leaderboard");
+
+            switch (rank) {
+                case 1 -> addStyleClassToChildren("rank_1");
+                case 2 -> addStyleClassToChildren("rank_2");
+                case 3 -> addStyleClassToChildren("rank_3");
+            }
+        }
+
+        private void addStyleClassToChildren(String className) {
+            getChildren().forEach(child -> child.getStyleClass().add(className));
+        }
     }
 
 }

@@ -1,8 +1,6 @@
 package szabo.game;
 
-import javafx.scene.layout.Background;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 
 public class AppManager extends StackPane {
     private final Leaderboard leaderboard = new Leaderboard();
