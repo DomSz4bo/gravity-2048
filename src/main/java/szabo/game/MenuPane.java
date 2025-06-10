@@ -8,14 +8,10 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
-public class MenuPane extends StackPane {
-    private ViewManager viewManager;
-
+public class MenuPane extends VBox {
     private ImageView titleImage = new ImageView();
 
     private VBox buttonContainer = new VBox();
@@ -24,29 +20,24 @@ public class MenuPane extends StackPane {
     private Button newGameButton =  new Button("New Game");
     private Button leaderboardButton =  new Button("Leaderboard");
 
-    private Leaderboard leaderboard = new Leaderboard();
-
-
-
-    public MenuPane(ViewManager viewManager) {
+    public MenuPane(AppManager appManager) {
         super();
-        setBackground(Background.fill(Color.web("#070F33")));
-        this.viewManager = viewManager;
+//        setBackground(Background.fill(Color.web("#070F33")));
 
-        playButton.setOnAction(e -> viewManager.showGame());
-        newGameButton.setOnAction(e -> viewManager.showGame());
-        leaderboardButton.setOnAction(e -> leaderboard.setVisible(true));
+        playButton.setOnAction(e -> appManager.showGame());
+        newGameButton.setOnAction(e -> appManager.showGame());
+        leaderboardButton.setOnAction(e -> appManager.showLeaderboard());
         exitButton.setOnAction(e -> System.exit(0));
 
         DoubleBinding minDimension =  Bindings.createDoubleBinding(() ->
-            Math.min(getWidth(), getHeight()), heightProperty(), widthProperty()
+            Math.min(appManager.getWidth(), appManager.getHeight()),
+            appManager.heightProperty(), appManager.widthProperty()
         );
 
-        var mainPane = new VBox();
-        mainPane.setAlignment(Pos.CENTER);
-        mainPane.getChildren().addAll(titleImage, buttonContainer);
-        mainPane.spacingProperty().bind(minDimension.divide(20));
-        mainPane.maxWidthProperty().bind(widthProperty().divide(2));
+        setAlignment(Pos.CENTER);
+        getChildren().addAll(titleImage, buttonContainer);
+        spacingProperty().bind(minDimension.divide(20));
+        maxWidthProperty().bind(appManager.widthProperty().divide(2));
 //        mainPane.setBackground(Background.fill(Color.web("rgba(255,198,128,1)")));
 
         Image img = new Image("file:images/icon2048.png");
@@ -73,17 +64,8 @@ public class MenuPane extends StackPane {
                     },
                     minDimension
             ));
-            btn.prefWidthProperty().bind(mainPane.widthProperty().multiply(0.8));
+            btn.prefWidthProperty().bind(widthProperty().multiply(0.8));
         }
-
-        leaderboard.setVisible(false);
-        leaderboard.maxWidthProperty().bind(widthProperty().multiply(0.6));
-        leaderboard.maxHeightProperty().bind(heightProperty().multiply(0.8));
-
-        getChildren().addAll(mainPane, leaderboard);
     }
 
-    public Leaderboard getLeaderboard() {
-        return leaderboard;
-    }
 }
