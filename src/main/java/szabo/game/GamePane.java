@@ -12,27 +12,32 @@ public class GamePane extends BorderPane {
 
     private static final double PLAYGROUND_RATIO = 0.7;     // width : height
     private static final double LINE_POSITION = 0.2;  // % of playground height
+    private static final String SCORE = "Score: ";
+    private static final String HIGH_SCORE = "High Score: ";
 
+    private GameState gameState;
+    private final Leaderboard leaderboard;
+    private final Label scoreLabel = new Label();
+    private final Label highScoreLabel = new Label();
 
-    public GamePane(AppManager handler) {
+    public GamePane(AppManager manager) {
         super();
+        leaderboard = manager.getLeaderboard();
 
 //        setPadding(new Insets(0, 5, 0, 5));
 
-        var scoreLabel = new Label("Score: 0");
         scoreLabel.setStyle("-fx-font-size: 25");
         scoreLabel.setBackground(Background.fill(Color.BLUEVIOLET));
         scoreLabel.setMaxWidth(Double.MAX_VALUE);
         scoreLabel.setAlignment(Pos.CENTER);
         HBox.setHgrow(scoreLabel, Priority.ALWAYS);
 
-        var highScoreLabel = new Label("High Score: " + handler.getLeaderboard().getHighScore());
         highScoreLabel.setStyle("-fx-font-size: 25");
         highScoreLabel.setBackground(Background.fill(Color.RED));
 
         var exitButton = new Button("Back to Menu");
         exitButton.setStyle("-fx-font-size: 25");
-        exitButton.setOnAction(e -> handler.showMenu());
+        exitButton.setOnAction(e -> manager.showMenu());
 
 
         var scorePane = new HBox(highScoreLabel, scoreLabel, exitButton);
@@ -40,6 +45,8 @@ public class GamePane extends BorderPane {
         scorePane.setAlignment(Pos.CENTER);
         setTop(scorePane);
         scorePane.prefHeightProperty().bind(heightProperty().divide(16));
+
+        // ------------------------------------------------
 
         var playgroundPane = new Pane();
         var container = new StackPane(playgroundPane);
@@ -74,7 +81,17 @@ public class GamePane extends BorderPane {
                 () -> Math.min(container.getHeight(), container.getWidth() / PLAYGROUND_RATIO),
                 container.heightProperty(),  container.widthProperty()
         ));
+    }
 
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
 
+    private void updateScoreLabel() {
+        scoreLabel.setText(SCORE + gameState.getScore());
+    }
+
+    private void updateHighScoreLabel() {
+        highScoreLabel.setText(HIGH_SCORE + leaderboard.getHighScore());
     }
 }
