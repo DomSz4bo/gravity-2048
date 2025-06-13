@@ -1,11 +1,30 @@
 package szabo.game;
 
+import javafx.geometry.Point2D;
+
 import java.io.*;
-import java.util.ArrayList;
+import java.util.List;
 
 public class GameState implements Serializable {
-    private final ArrayList<BlockInfo> blocks = new ArrayList<>();
-    private int score = 0;
+    private final List<BlockState> blocks;
+    private final BlockState activeBlock;
+    private final int score;
+
+    public GameState() {
+        blocks = List.of();
+        activeBlock = null;
+        score = 0;
+    }
+    public List<BlockState> getBlockStates() {
+        return blocks;
+    }
+    public BlockState getActiveBlock() {
+        return activeBlock;
+    }
+    public int getScore() {
+        return score;
+    }
+
 
     public static GameState load(String gameSaveFile) throws ClassNotFoundException, IOException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(gameSaveFile))) {
@@ -21,20 +40,7 @@ public class GameState implements Serializable {
         }
     }
 
-    public int getScore() {
-        return score;
-    }
+    record BlockState(Point2D position, int value, int id) implements Serializable {
 
-
-    static class BlockInfo implements Serializable {
-        private double x, y;
-        private double velocityY = 0;
-        private final int value;
-
-        public BlockInfo(double x, double y, int value) {
-            this.x = x;
-            this.y = y;
-            this.value = value;
-        }
     }
 }

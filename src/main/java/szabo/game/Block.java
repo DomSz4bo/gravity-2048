@@ -1,7 +1,6 @@
 package szabo.game;
 
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
 import java.util.HashMap;
