@@ -72,6 +72,7 @@ public class LeaderboardPane extends BorderPane {
 
         Platform.runLater(() -> {
             bindFontSizeToMinDimension(title, 20, 15);
+            // TODO rethink the amount of divFactor - realise what it is bound to
             bindFontSizeToMinDimension(closeButton, 14, 30);
         });
 

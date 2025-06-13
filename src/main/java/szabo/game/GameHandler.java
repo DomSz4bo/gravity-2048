@@ -3,9 +3,13 @@ package szabo.game;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.Point2D;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+
+// TODO create class for the constants
 
 public class GameHandler {
     public static final double PLAYGROUND_RATIO = 0.7;      // width : height
@@ -61,14 +65,25 @@ public class GameHandler {
         if (useExisting && gameState == null) {
             try {
                 gameState = GameState.load(GAME_SAVE);
+                System.out.println("Started existing game");
             } catch (ClassNotFoundException | IOException e) {
                 System.err.println("Failed to load game: " + e.getMessage());
                 gameState = new GameState();
             }
         } else  {
             gameState = new GameState();
+            System.out.println("Started new game");
         }
         // start animation
+        var block = new GameState.BlockState(new Point2D(0.5, 0.5), 0, 0, 0, 1, 2);
+        var ok = new GameState(List.of(), block, 0);
+//        gameState = new GameState(List.of(
+//                new GameState.BlockState(
+//                        new Point2D(0.5, 0.5),
+//                        0, 0, 0, 2, 1
+//                )
+//        ));
+        gamePane.paint(ok);
     }
 
     public GamePane getGamePane() {

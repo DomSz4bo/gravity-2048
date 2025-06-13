@@ -1,20 +1,15 @@
 package szabo.game;
 
-import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 
 public class GamePane extends BorderPane {
 
     private static final String SCORE = "Score: ";
     private static final String HIGH_SCORE = "High Score: ";
 
-//    private GameState gameState;
     private final Leaderboard leaderboard;
     private final Label scoreLabel = new Label();
     private final Label highScoreLabel = new Label();
@@ -57,6 +52,11 @@ public class GamePane extends BorderPane {
     public void paint(GameState gameState) {
         scoreLabel.setText(SCORE + gameState.getScore());
         highScoreLabel.setText(HIGH_SCORE + leaderboard.getHighScore());
+        playground.paintBlocks(gameState.getAllBlocks());
+    }
+
+    public Playground getPlayground() {
+        return playground;
     }
 
 }

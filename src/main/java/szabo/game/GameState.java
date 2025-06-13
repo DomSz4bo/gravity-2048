@@ -4,28 +4,24 @@ import javafx.geometry.Point2D;
 
 import java.io.*;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GameState implements Serializable {
     private final List<BlockState> blocks;
-    private final BlockState activeBlock;
     private final int score;
 
     public GameState() {
         blocks = List.of();
-        activeBlock = null;
         score = 0;
     }
     public GameState(List<BlockState> blocks, BlockState activeBlock, int score) {
-        this.blocks = blocks;
-        this.activeBlock = activeBlock;
+        this.blocks = Stream.concat(blocks.stream(), Stream.of(activeBlock)).toList();
         this.score = score;
     }
 
-    public List<BlockState> getBlockStates() {
+    public List<BlockState> getAllBlocks() {
         return blocks;
-    }
-    public BlockState getActiveBlock() {
-        return activeBlock;
     }
     public int getScore() {
         return score;
@@ -46,7 +42,7 @@ public class GameState implements Serializable {
         }
     }
 
-    record BlockState(Point2D position, double velocityX, double velocityY,
+    public record BlockState(Point2D position, double velocityX, double velocityY,
                       double angularVelocity, int value, int id) implements Serializable {
 
     }

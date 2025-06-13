@@ -1,12 +1,13 @@
 package szabo.game;
 
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.util.HashMap;
 
 
-public class Block extends Rectangle {
+public class BlockShape extends Rectangle {
     private final static String[] hexCodes = new String[] {
             "#FFE285", "#FFCD29", "#FFA333", "#ED6542", "#FC9FBE", "#A778FF",
             "#6D4DFF", "#61ABFF", "#1F87FF", "#00D483", "#20AD00", "#126100",
@@ -24,8 +25,8 @@ public class Block extends Rectangle {
 
     private int value;
 
-    public Block(int width, int height, int value) {
-        super(width, height);
+    public BlockShape(int value) {
+        super();
         if (!colors.containsKey(value)) {
             throw new  IllegalArgumentException("Value " + value + " is not a valid block value.");
         }
@@ -35,8 +36,13 @@ public class Block extends Rectangle {
         this.value = value;
     }
 
-    public void setPosition(double x, double y) {
-        setX(x);
-        setY(y);
+    public void setCenterPosition(Point2D position) {
+        setX(position.getX() - getWidth() / 2);
+        setY(position.getY()  + getHeight() / 2);
+    }
+
+    public void setCenterPosition(double x, double y) {
+        setX(x - getWidth() / 2);
+        setY(y  + getHeight() / 2);
     }
 }

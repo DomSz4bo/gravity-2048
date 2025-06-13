@@ -7,7 +7,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,7 @@ public class MenuPane extends VBox {
         setAlignment(Pos.CENTER);
         getChildren().addAll(titleImage, buttonContainer);
         spacingProperty().bind(minDimension.divide(20));
+        // TODO maybe move out of this class
         maxWidthProperty().bind(appManager.widthProperty().divide(2));
 
         Image img = new Image("file:images/icon2048.png");
