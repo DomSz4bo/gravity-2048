@@ -28,6 +28,10 @@ public class GameHandler {
         gameLogic = new GameLogic();
         existingGameProperty = new SimpleBooleanProperty();
         updateExistingGameProperty();
+
+//        gamePane.setOnMousePressed(mouseEvent -> {
+//            existingGameProperty.setValue(!existingGameProperty.getValue());
+//        });
 //        Timeline ok = new Timeline(new KeyFrame(Duration.millis(16), (event) -> {
 //
 //        }));
@@ -64,7 +68,6 @@ public class GameHandler {
         } else  {
             gameState = new GameState();
         }
-//        gameLogic.loadFromState(gameState);
         // start animation
     }
 

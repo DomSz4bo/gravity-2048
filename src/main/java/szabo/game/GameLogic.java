@@ -4,24 +4,22 @@ import javafx.geometry.Point2D;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Geometry;
 import org.dyn4j.geometry.MassType;
+import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.World;
 
-import java.util.Objects;
-import java.util.stream.Stream;
+import java.util.UUID;
 
-
-// make coordinate space same as JavaFX coordinates ([0, 0] = TOP_LEFT_CORNER)
 
 public class GameLogic {
     private static final double PHYSICS_HEIGHT = 1;  // meter height
 
     private final World<Body> world;
-    private final double width, height;
+    private final double width = GameHandler.PLAYGROUND_RATIO * PHYSICS_HEIGHT;
+    private final double height = PHYSICS_HEIGHT;
+    private int score;
 
     public GameLogic() {
-        width = GameHandler.PLAYGROUND_RATIO * PHYSICS_HEIGHT;
-        height = PHYSICS_HEIGHT;
-
+        score = 0;
         world = new World<>();
 //        world.setBounds(new AxisAlignedBounds(width, height));
         createBlockContainer();
@@ -33,11 +31,7 @@ public class GameLogic {
 
     public void addBlock(int value, int positionX, int positionY) {
         var block = new BlockBody(value);
-        // pull out into constants
-        block.addFixture(Geometry.createSquare(GameHandler.BLOCK_SIZE * width), 1.0, 0.8, 0.35);
         block.translate(positionX * width, height * (1 - positionY));
-        block.setMassType(MassType.NORMAL);
-        block.setAngularDamping(0.5);   // also into constant
         world.addBody(block);
     }
 
@@ -68,14 +62,6 @@ public class GameLogic {
         world.addBody(floor);
     }
 
-    public GameState createGameState() {
-        GameState gameState = new GameState();
-        return gameState;
-    }
-
-    public void loadFromState(GameState gameState) {
-
-    }
 
     private class BlockBody extends Body {
         private static int blockCount = 0;
@@ -86,6 +72,11 @@ public class GameLogic {
             super();
             number = blockCount++;
             this.value = value;
+            // config
+            // TODO pull out into constants
+            addFixture(Geometry.createSquare(GameHandler.BLOCK_SIZE * width), 1.0, 0.8, 0.35);
+            setMassType(MassType.NORMAL);
+            setAngularDamping(0.5);
         }
 
         private Point2D getPercentagePosition() {
@@ -102,4 +93,33 @@ public class GameLogic {
             return number;
         }
     }
+
+
+    /* Maybe separate into a GameStateBuilder (physics -> state) and PhysicsLoader (state -> physics) class */
+    public GameState createGameState() {
+        return new GameState(
+                world.getBodies().stream().filter(b -> b instanceof BlockBody)
+                        .map(BlockBody.class::cast)
+                        .map(GameLogic::createBlockState).toList(),
+                null,
+                score
+        );
+    }
+
+    private static GameState.BlockState createBlockState(BlockBody block) {
+        Vector2 linearVelocity = block.getLinearVelocity();
+        return new GameState.BlockState(
+                block.getPercentagePosition(),
+                linearVelocity.x, linearVelocity.y,
+                block.getAngularVelocity(),
+                block.getValue(),
+                block.getID()
+        );
+    }
+
+    // TODO
+    public static GameLogic loadFromGameState(GameState gameState) {
+        return new GameLogic();
+    }
+
 }

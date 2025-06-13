@@ -15,6 +15,12 @@ public class GameState implements Serializable {
         activeBlock = null;
         score = 0;
     }
+    public GameState(List<BlockState> blocks, BlockState activeBlock, int score) {
+        this.blocks = blocks;
+        this.activeBlock = activeBlock;
+        this.score = score;
+    }
+
     public List<BlockState> getBlockStates() {
         return blocks;
     }
@@ -40,7 +46,8 @@ public class GameState implements Serializable {
         }
     }
 
-    record BlockState(Point2D position, int value, int id) implements Serializable {
+    record BlockState(Point2D position, double velocityX, double velocityY,
+                      double angularVelocity, int value, int id) implements Serializable {
 
     }
 }
