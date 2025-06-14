@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Point2D;
+import javafx.scene.input.MouseButton;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,11 +35,15 @@ public class GameHandler {
         updateExistingGameProperty();
 
         gamePane.getPlayground().getPlaygroundPane().setOnMousePressed(mouseEvent -> {
-            System.out.println(mouseEvent.getX() + " " + mouseEvent.getY());
-            double posX = mouseEvent.getX() / gamePane.getPlayground().getPlaygroundPane().getWidth();
-            double posY = mouseEvent.getY() / gamePane.getPlayground().getPlaygroundPane().getHeight();
-            System.out.println(posX + "% & " + (1 - posY) + "%");
-            gameLogic.addBlock(2, posX, (1 - posY));
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+                System.out.println(mouseEvent.getX() + " " + mouseEvent.getY());
+                double posX = mouseEvent.getX() / gamePane.getPlayground().getPlaygroundPane().getWidth();
+                double posY = mouseEvent.getY() / gamePane.getPlayground().getPlaygroundPane().getHeight();
+                System.out.println(posX + "% & " + (1 - posY) + "%");
+                gameLogic.addBlock(2, posX, (1 - posY));
+            } else if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                gamePane.getPlayground().runEffect(mouseEvent.getX(), mouseEvent.getY());
+            }
         });
 //        Timeline ok = new Timeline(new KeyFrame(Duration.millis(16), (event) -> {
 //

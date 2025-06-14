@@ -4,7 +4,6 @@ import javafx.beans.binding.Bindings;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,6 @@ public class Playground extends StackPane {
     private static final double LINE_POSITION = 0.2;  // % of playground height
 
     private final Pane playgroundPane = new Pane();
-    private boolean beingDragged = false;
     private final HashMap<Integer, BlockShape> blockMap = new HashMap<>();
 
     public Playground() {
@@ -29,9 +27,9 @@ public class Playground extends StackPane {
                         false, true, true, true
                 )
         )));
-
         paintDeathLine();
         testingEvents();
+        playgroundPane.widthProperty().addListener(e -> resizeBlocks());
     }
 
     // TODO remove after testing
@@ -51,22 +49,6 @@ public class Playground extends StackPane {
                 () -> Math.min(getHeight(), getWidth() / GameHandler. PLAYGROUND_RATIO),
                 heightProperty(),  widthProperty()
         ));
-
-        var rec = new Rectangle(40, 40, 30, 30);
-        rec.setFill(Color.GREEN);
-        playgroundPane.getChildren().add(rec);
-
-        playgroundPane.setOnMousePressed(e -> {
-            beingDragged = rec.intersects(e.getX(), e.getY(), 1, 1);
-            System.out.println(beingDragged);
-        });
-        playgroundPane.setOnMouseReleased(e -> beingDragged = false);
-        playgroundPane.setOnMouseDragged(e -> {
-            if (beingDragged) {
-                rec.setX(Math.max(0, Math.min(e.getX(), playgroundPane.getWidth() - rec.getWidth())));
-                rec.setY(Math.max(0, Math.min(e.getY(), playgroundPane.getHeight() - rec.getHeight())));
-            }
-        });
     }
 
     private void paintDeathLine() {
@@ -76,6 +58,11 @@ public class Playground extends StackPane {
         line.startYProperty().bind(playgroundPane.heightProperty().multiply(LINE_POSITION));
         line.endYProperty().bind(playgroundPane.heightProperty().multiply(LINE_POSITION));
         playgroundPane.getChildren().add(line);
+    }
+
+    private void resizeBlocks() {
+        double blockSize = GameHandler.BLOCK_SIZE * playgroundPane.getWidth();
+        blockMap.values().forEach(block -> block.setSize(blockSize));
     }
 
     private void clearUnusedBlocks(Set<Integer> currentBlockIDs) {
@@ -115,6 +102,16 @@ public class Playground extends StackPane {
             );
             visualBlock.setRotation(-blockState.angleRadians());
         }
+    }
+
+
+    public void runEffect(double posX, double posY) {
+        double particleSize = playgroundPane.getWidth() / 100;
+        double radius = playgroundPane.getWidth() / 60;
+        double travel = playgroundPane.getWidth() / 3;
+        Confetti con = new Confetti(particleSize, particleSize, 100, playgroundPane,
+                posX ,posY, radius, travel);
+        con.runEffect();
     }
 
 }

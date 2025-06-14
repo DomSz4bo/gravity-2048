@@ -2,6 +2,7 @@ package szabo.game;
 
 import javafx.geometry.Point2D;
 import org.dyn4j.dynamics.Body;
+import org.dyn4j.dynamics.Settings;
 import org.dyn4j.geometry.Geometry;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
@@ -21,7 +22,6 @@ public class GameLogic {
         score = 0;
         world = new World<>();
         System.out.println("Gravity: " + world.getGravity());
-//        world.setBounds(new AxisAlignedBounds(width, height));
         createBlockContainer();
     }
 
@@ -45,26 +45,23 @@ public class GameLogic {
         leftWall.addFixture(Geometry.createRectangle(verticalWallThickness, height));  // experiment with friction, density etc.
         leftWall.setMassType(MassType.INFINITE);
         leftWall.translate(verticalWallThickness, height / 2);
-//        leftWall.setUserData();
 
         Body rightWall = new Body();
         rightWall.addFixture(Geometry.createRectangle(verticalWallThickness, height));
         rightWall.setMassType(MassType.INFINITE);
         rightWall.translate(width - verticalWallThickness, height / 2);
-//        rightWall.setUserData();
 
         Body floor = new Body();
         floor.addFixture(Geometry.createRectangle(width, horizontalWallThickness));
         floor.setMassType(MassType.INFINITE);
         floor.translate(width / 2, horizontalWallThickness);
-//        floor.setUserData();
-
-        System.out.println("floor: " + floor.getTransform().getTranslation());
 
         world.addBody(leftWall);
         world.addBody(rightWall);
         world.addBody(floor);
     }
+
+    // TODO add collision and merging logic
 
     private class BlockBody extends Body {
         private static int blockCount = 0;
@@ -75,9 +72,10 @@ public class GameLogic {
             this.value = value;
             // config
             // TODO pull out into constants
-            addFixture(Geometry.createSquare(GameHandler.BLOCK_SIZE * width), 1.0, 0.8, 0.35);
+            addFixture(Geometry.createSquare(GameHandler.BLOCK_SIZE * width), 1.0, 0.8, 0.3);
             setMass(MassType.NORMAL);
-            setAngularDamping(0.7);
+            setAngularDamping(2);
+            setLinearDamping(1);
         }
 
         private Point2D getPercentagePosition() {
@@ -137,14 +135,5 @@ public class GameLogic {
         return new GameLogic();
     }
 
-    public static void main(String[] args) {
-        var ok = new GameLogic();
-        ok.addBlock(2, 0.5, 0.5);
-        for (int i = 0; i < 10; i++) {
-            ok.printBlocks();
-            ok.update(0);
-        }
-
-    }
 
 }
