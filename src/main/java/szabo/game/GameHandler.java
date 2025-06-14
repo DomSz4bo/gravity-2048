@@ -33,9 +33,13 @@ public class GameHandler {
         existingGameProperty = new SimpleBooleanProperty();
         updateExistingGameProperty();
 
-//        gamePane.setOnMousePressed(mouseEvent -> {
-//            existingGameProperty.setValue(!existingGameProperty.getValue());
-//        });
+        gamePane.getPlayground().getPlaygroundPane().setOnMousePressed(mouseEvent -> {
+            System.out.println(mouseEvent.getX() + " " + mouseEvent.getY());
+            double posX = mouseEvent.getX() / gamePane.getPlayground().getPlaygroundPane().getWidth();
+            double posY = mouseEvent.getY() / gamePane.getPlayground().getPlaygroundPane().getHeight();
+            System.out.println(posX + "% & " + (1 - posY) + "%");
+            gameLogic.addBlock(2, posX, (1 - posY));
+        });
 //        Timeline ok = new Timeline(new KeyFrame(Duration.millis(16), (event) -> {
 //
 //        }));
@@ -44,18 +48,29 @@ public class GameHandler {
         animationTimer = new AnimationTimer() {
             // maybe limit fps or switch to Timeline
             private long lastUpdate;
+            private long frameCount = 0;
             @Override
             public void start() {
                 super.start();
-                lastUpdate = System.currentTimeMillis();
+                lastUpdate = System.nanoTime();
             }
 
             @Override
             public void handle(long now) {
+                frameCount++;
+//                System.out.println("hello frame:" + frameCount);
                 long delta = now - lastUpdate;
-                gameLogic.tick(delta);
-                gameState = gameLogic.createGameState();
-                gamePane.paint(gameState);
+                double deltaSeconds = delta / 1000000000.0;
+                if (gameLogic.update(deltaSeconds)) {
+//                    System.out.println("STEPPED");
+                    gameState = gameLogic.createGameState();
+//                    System.out.println(gameState);
+                    gamePane.paint(gameState);
+                } else {
+                    System.out.println("NOT stepped");
+                }
+                lastUpdate = now;
+
             }
         };
 //        animationTimer
@@ -68,22 +83,16 @@ public class GameHandler {
                 System.out.println("Started existing game");
             } catch (ClassNotFoundException | IOException e) {
                 System.err.println("Failed to load game: " + e.getMessage());
-                gameState = new GameState();
+//                gameState = new GameState();
             }
         } else  {
-            gameState = new GameState();
+//            gameState = new GameState();
             System.out.println("Started new game");
         }
         // start animation
-        var block = new GameState.BlockState(new Point2D(0.5, 0.5), 0, 0, 0, 1, 2);
-        var ok = new GameState(List.of(), block, 0);
-//        gameState = new GameState(List.of(
-//                new GameState.BlockState(
-//                        new Point2D(0.5, 0.5),
-//                        0, 0, 0, 2, 1
-//                )
-//        ));
-        gamePane.paint(ok);
+//        var block = new GameState.BlockState(new Point2D(0.2, 0.3), 0, 0, 0, 1, 2);
+        animationTimer.start();
+//        gamePane.paint(gameState);
     }
 
     public GamePane getGamePane() {

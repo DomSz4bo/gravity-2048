@@ -7,11 +7,9 @@ import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.World;
 
-import java.util.UUID;
-
 
 public class GameLogic {
-    private static final double PHYSICS_HEIGHT = 1;  // meter height
+    private static final double PHYSICS_HEIGHT = 5;  // meter height
 
     private final World<Body> world;
     private final double width = GameHandler.PLAYGROUND_RATIO * PHYSICS_HEIGHT;
@@ -19,19 +17,23 @@ public class GameLogic {
     private int score;
 
     public GameLogic() {
+        System.out.println("World width: " + this.width + "   height: " + this.height);
         score = 0;
         world = new World<>();
+        System.out.println("Gravity: " + world.getGravity());
 //        world.setBounds(new AxisAlignedBounds(width, height));
         createBlockContainer();
     }
 
-    public void tick(long deltaTime) {
-        world.update(deltaTime);
+    public boolean update(double elapsedTime) {
+        world.update(elapsedTime);
+//        printBlocks();
+        return true;
     }
 
-    public void addBlock(int value, int positionX, int positionY) {
-        var block = new BlockBody(value);
-        block.translate(positionX * width, height * (1 - positionY));
+    public void addBlock(int value, double posX, double posY) {
+        BlockBody block = new BlockBody(value);
+        block.translate(posX * width, posY * height);
         world.addBody(block);
     }
 
@@ -42,41 +44,40 @@ public class GameLogic {
         Body leftWall = new Body();
         leftWall.addFixture(Geometry.createRectangle(verticalWallThickness, height));  // experiment with friction, density etc.
         leftWall.setMassType(MassType.INFINITE);
-        leftWall.translate(0 + verticalWallThickness / 2, height / 2);
+        leftWall.translate(verticalWallThickness, height / 2);
 //        leftWall.setUserData();
 
         Body rightWall = new Body();
         rightWall.addFixture(Geometry.createRectangle(verticalWallThickness, height));
         rightWall.setMassType(MassType.INFINITE);
-        rightWall.translate(0 - verticalWallThickness / 2, height / 2);
+        rightWall.translate(width - verticalWallThickness, height / 2);
 //        rightWall.setUserData();
 
         Body floor = new Body();
         floor.addFixture(Geometry.createRectangle(width, horizontalWallThickness));
         floor.setMassType(MassType.INFINITE);
-        floor.translate(width / 2, horizontalWallThickness / 2);
+        floor.translate(width / 2, horizontalWallThickness);
 //        floor.setUserData();
+
+        System.out.println("floor: " + floor.getTransform().getTranslation());
 
         world.addBody(leftWall);
         world.addBody(rightWall);
         world.addBody(floor);
     }
 
-
     private class BlockBody extends Body {
         private static int blockCount = 0;
-        private final int number;
+        private final int IDNumber = blockCount++;
         private final int value;
-
         private BlockBody(int value) {
             super();
-            number = blockCount++;
             this.value = value;
             // config
             // TODO pull out into constants
             addFixture(Geometry.createSquare(GameHandler.BLOCK_SIZE * width), 1.0, 0.8, 0.35);
-            setMassType(MassType.NORMAL);
-            setAngularDamping(0.5);
+            setMass(MassType.NORMAL);
+            setAngularDamping(0.7);
         }
 
         private Point2D getPercentagePosition() {
@@ -86,16 +87,29 @@ public class GameLogic {
             );
         }
 
+        private int getID() {
+            return IDNumber;
+        }
         private int getValue() {
             return value;
         }
-        private int getID() {
-            return number;
+    }
+
+    private void printBlocks() {
+        for (Body b : world.getBodies()) {
+            if (b instanceof BlockBody) {
+                System.out.println("---\n");
+                System.out.println(b.getTransform().getTranslation());
+                System.out.println(b.getLinearVelocity());
+                System.out.println(b.getAngularDamping());
+                System.out.println("---\n");
+            }
         }
     }
 
 
     /* Maybe separate into a GameStateBuilder (physics -> state) and PhysicsLoader (state -> physics) class */
+    // TODO active block logic
     public GameState createGameState() {
         return new GameState(
                 world.getBodies().stream().filter(b -> b instanceof BlockBody)
@@ -110,6 +124,7 @@ public class GameLogic {
         Vector2 linearVelocity = block.getLinearVelocity();
         return new GameState.BlockState(
                 block.getPercentagePosition(),
+                block.getTransform().getRotationAngle(),
                 linearVelocity.x, linearVelocity.y,
                 block.getAngularVelocity(),
                 block.getValue(),
@@ -120,6 +135,16 @@ public class GameLogic {
     // TODO
     public static GameLogic loadFromGameState(GameState gameState) {
         return new GameLogic();
+    }
+
+    public static void main(String[] args) {
+        var ok = new GameLogic();
+        ok.addBlock(2, 0.5, 0.5);
+        for (int i = 0; i < 10; i++) {
+            ok.printBlocks();
+            ok.update(0);
+        }
+
     }
 
 }

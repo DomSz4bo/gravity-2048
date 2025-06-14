@@ -90,23 +90,30 @@ public class Playground extends StackPane {
                 }
         );
     }
-
-    private BlockShape createAndAddBlock(int value) {
+    // TODO resizing the Blocks
+    private BlockShape createAndAddBlock(int value, double size) {
         var block = new BlockShape(value);
-        getChildren().add(block);
+        block.setSize(size);
+        playgroundPane.getChildren().add(block);
         return block;
+    }
+
+    public Pane getPlaygroundPane() {
+        return playgroundPane;
     }
 
     public void paintBlocks(List<GameState.BlockState> blocks) {
         clearUnusedBlocks(blocks.stream().map(GameState.BlockState::id).collect(Collectors.toSet()));
         double blockSize = GameHandler.BLOCK_SIZE * playgroundPane.getWidth();
-        for (GameState.BlockState block : blocks) {
+        for (GameState.BlockState blockState : blocks) {
             BlockShape visualBlock = blockMap.computeIfAbsent(
-                    block.id(), id -> createAndAddBlock(block.id())
+                    blockState.id(), id -> createAndAddBlock(blockState.value(), blockSize)
             );
-            visualBlock.setCenterPosition(block.position());
-            visualBlock.setWidth(blockSize);
-            visualBlock.setHeight(blockSize);
+            visualBlock.setCenterPosition(
+                    blockState.position().getX() * playgroundPane.getWidth(),
+                    playgroundPane.getHeight() * (1 - blockState.position().getY())
+            );
+            visualBlock.setRotation(-blockState.angleRadians());
         }
     }
 

@@ -1,13 +1,18 @@
 package szabo.game;
 
 import javafx.geometry.Point2D;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 import java.util.HashMap;
 
 
-public class BlockShape extends Rectangle {
+public class BlockShape extends StackPane {
     private final static String[] hexCodes = new String[] {
             "#FFE285", "#FFCD29", "#FFA333", "#ED6542", "#FC9FBE", "#A778FF",
             "#6D4DFF", "#61ABFF", "#1F87FF", "#00D483", "#20AD00", "#126100",
@@ -24,25 +29,38 @@ public class BlockShape extends Rectangle {
     }
 
     private int value;
+    private final Rectangle rectangle =  new Rectangle();
+    private final Text text = new Text();
 
     public BlockShape(int value) {
         super();
         if (!colors.containsKey(value)) {
-            throw new  IllegalArgumentException("Value " + value + " is not a valid block value.");
+            throw new IllegalArgumentException("Value " + value + " is not a valid block value.");
         }
-        setFill(colors.get(value));
-        setArcWidth(10);
-        setArcHeight(10);
+        rectangle.setFill(colors.get(value));
+        rectangle.setStroke(Color.BLACK);
+        text.setFill(Color.BLACK);
+        text.setText(Integer.toString(value));
+        getChildren().addAll(rectangle, text);
         this.value = value;
     }
 
-    public void setCenterPosition(Point2D position) {
-        setX(position.getX() - getWidth() / 2);
-        setY(position.getY()  + getHeight() / 2);
+    public void setSize(double size) {
+        rectangle.setWidth(size);
+        rectangle.setHeight(size);
+        rectangle.setStrokeWidth(size/100);
+        text.setFont(Font.font("Verdana", FontWeight.BOLD, size / 3));
     }
 
     public void setCenterPosition(double x, double y) {
-        setX(x - getWidth() / 2);
-        setY(y  + getHeight() / 2);
+        double xPos = x - rectangle.getWidth() / 2;
+        double yPos = y - rectangle.getHeight() / 2;
+        relocate(xPos, yPos);
     }
+
+    public void setRotation(double radians) {
+        double angle = Math.toDegrees(radians);
+        rectangle.setRotate(angle);
+    }
+
 }

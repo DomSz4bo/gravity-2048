@@ -8,20 +8,26 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GameState implements Serializable {
+    private final BlockState activeBlock;
     private final List<BlockState> blocks;
     private final int score;
 
     public GameState() {
+        activeBlock = null;
         blocks = List.of();
         score = 0;
     }
     public GameState(List<BlockState> blocks, BlockState activeBlock, int score) {
-        this.blocks = Stream.concat(blocks.stream(), Stream.of(activeBlock)).toList();
+        this.activeBlock = activeBlock;
+        this.blocks = List.copyOf(blocks);
         this.score = score;
     }
 
     public List<BlockState> getAllBlocks() {
-        return blocks;
+        if (activeBlock == null) {
+            return blocks;
+        }
+        return Stream.concat(blocks.stream(), Stream.of(activeBlock)).toList();
     }
     public int getScore() {
         return score;
@@ -42,8 +48,18 @@ public class GameState implements Serializable {
         }
     }
 
-    public record BlockState(Point2D position, double velocityX, double velocityY,
-                      double angularVelocity, int value, int id) implements Serializable {
+    public record BlockState(Point2D position, double angleRadians,
+                             double velocityX, double velocityY,
+                             double angularVelocity, int value, int id) implements Serializable {
 
+    }
+
+    @Override
+    public String toString() {
+        return "GameState{" +
+                "activeBlock=" + activeBlock +
+                ", blocks=" + blocks +
+                ", score=" + score +
+                '}';
     }
 }

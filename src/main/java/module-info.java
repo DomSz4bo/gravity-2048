@@ -3,6 +3,7 @@ module szabo.game {
     requires javafx.fxml;
     requires org.dyn4j;
     requires java.sql;
+    requires java.desktop;
 
 
     opens szabo.game to javafx.fxml;

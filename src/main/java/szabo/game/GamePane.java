@@ -40,12 +40,12 @@ public class GamePane extends BorderPane {
         var scorePane = new HBox(highScoreLabel, scoreLabel, exitButton);
 //        scorePane.setBackground(Background.fill(Color.ORANGE));
         scorePane.setAlignment(Pos.CENTER);
-        setTop(scorePane);
         scorePane.prefHeightProperty().bind(heightProperty().divide(16));
 
         // ------------------------------------------------
 
         setCenter(playground);
+        setTop(scorePane);
 
     }
 
