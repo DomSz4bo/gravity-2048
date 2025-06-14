@@ -13,11 +13,14 @@ import java.util.List;
 import java.util.Random;
 
 public class Confetti {
-    private static final double DURATION = 750; // Duration of movement in milliseconds (4 seconds)
+    private static final double DURATION = 600;
     private final Random random = new Random();
     private final double MAX_DISTANCE;
     private final List<ConfettiParticle> particles = new ArrayList<>();
 
+    // TODO
+    //  * make travel a radius so that it has a circular shape
+    //  * make it so that the Color is corresponding to the Block being created or merged
     public Confetti(double particleWidth, double particleHeight, int count, Pane parent, double x, double y, double radius, double maxTravel) {
         MAX_DISTANCE = maxTravel;
         for (int i = 0; i < count; i++) {
@@ -42,6 +45,7 @@ public class Confetti {
         private ConfettiParticle(double x, double y, double width, double height) {
             super(x, y, width, height);
             setFill(getRandomColor());
+            setRotate(random.nextInt(360));
 
             translateTransition = new TranslateTransition(Duration.millis(DURATION), this);
             translateTransition.setByX(random.nextDouble(-1.0, 1.0) * MAX_DISTANCE);

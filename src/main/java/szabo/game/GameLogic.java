@@ -8,27 +8,42 @@ import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.World;
 
+import java.util.Random;
+
 
 public class GameLogic {
-    private static final double PHYSICS_HEIGHT = 5;  // meter height
+    private static final double PHYSICS_HEIGHT = 5;         // height in meters - affects physics scale
+    private static final long RELEASE_DELAY = 500;          // ms delay of next block generation
+    public static final double BLOCK_START_HEIGHT = 0.9 * PHYSICS_HEIGHT;    // from top of Height
 
     private final World<Body> world;
     private final double width = GameHandler.PLAYGROUND_RATIO * PHYSICS_HEIGHT;
     private final double height = PHYSICS_HEIGHT;
+
     private int score;
+    private int maxBlockValueExponent = 1;
+    private BlockBody blockToPosition;
+    private long releaseTime = System.currentTimeMillis();
 
     public GameLogic() {
-        System.out.println("World width: " + this.width + "   height: " + this.height);
-        score = 0;
         world = new World<>();
+        score = 0;
+        setNewBlockToPosition();
+        System.out.println("World width: " + this.width + "   height: " + this.height);
         System.out.println("Gravity: " + world.getGravity());
         createBlockContainer();
     }
 
-    public boolean update(double elapsedTime) {
+    public void update(double elapsedTime) {
         world.update(elapsedTime);
+        if (blockToPosition == null) {
+            long now = System.currentTimeMillis();
+            long deltaTime = now - releaseTime;
+            if (deltaTime > RELEASE_DELAY) {
+                setNewBlockToPosition();
+            }
+        }
 //        printBlocks();
-        return true;
     }
 
     public void addBlock(int value, double posX, double posY) {
@@ -61,7 +76,28 @@ public class GameLogic {
         world.addBody(floor);
     }
 
+    // TODO add block positioning and generating
+    private BlockBody generateBlock() {
+        return new BlockBody(generateBlockValue());
+    }
+
+    private final Random random = new Random();
+    private int generateBlockValue() {
+        int exp = random.nextInt(0, maxBlockValueExponent) + 1;
+        return (1 << exp);
+    }
+
+    private void setNewBlockToPosition() {
+        blockToPosition = generateBlock();
+        blockToPosition.translate(width / 2, BLOCK_START_HEIGHT);
+    }
+
     // TODO add collision and merging logic
+
+
+
+
+
 
     private class BlockBody extends Body {
         private static int blockCount = 0;
@@ -93,6 +129,9 @@ public class GameLogic {
         }
     }
 
+
+
+    // TODO remove - used only for debugging
     private void printBlocks() {
         for (Body b : world.getBodies()) {
             if (b instanceof BlockBody) {
@@ -106,6 +145,7 @@ public class GameLogic {
     }
 
 
+
     /* Maybe separate into a GameStateBuilder (physics -> state) and PhysicsLoader (state -> physics) class */
     // TODO active block logic
     public GameState createGameState() {
@@ -113,12 +153,13 @@ public class GameLogic {
                 world.getBodies().stream().filter(b -> b instanceof BlockBody)
                         .map(BlockBody.class::cast)
                         .map(GameLogic::createBlockState).toList(),
-                null,
+                createBlockState(blockToPosition),
                 score
         );
     }
 
     private static GameState.BlockState createBlockState(BlockBody block) {
+        if (block == null) return null;
         Vector2 linearVelocity = block.getLinearVelocity();
         return new GameState.BlockState(
                 block.getPercentagePosition(),

@@ -109,8 +109,10 @@ public class Playground extends StackPane {
         double particleSize = playgroundPane.getWidth() / 100;
         double radius = playgroundPane.getWidth() / 60;
         double travel = playgroundPane.getWidth() / 3;
-        Confetti con = new Confetti(particleSize, particleSize, 100, playgroundPane,
-                posX ,posY, radius, travel);
+        Confetti con = new Confetti(
+                particleSize, particleSize * 2, 100, playgroundPane,
+                posX ,posY, radius, travel
+        );
         con.runEffect();
     }
 

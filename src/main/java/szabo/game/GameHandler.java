@@ -16,7 +16,6 @@ public class GameHandler {
     public static final double PLAYGROUND_RATIO = 0.7;      // width : height
     public static final double WALL_THICKNESS = 0.01;           // % of Playground
     public static final double BLOCK_SIZE = 0.18;           // % of Playground Width
-    public static final double BLOCK_START_HEIGHT = 0.1;    // % of Playground Height
     private static final String GAME_SAVE = "saved_game.dat";
 
     private final BooleanProperty existingGameProperty;
@@ -34,13 +33,23 @@ public class GameHandler {
         existingGameProperty = new SimpleBooleanProperty();
         updateExistingGameProperty();
 
+        gamePane.getPlayground().getPlaygroundPane().setOnMouseDragged(event -> {
+            System.out.println("knuckle dragging twat: " + event.getX() + ", " + event.getY());
+        });
+        gamePane.getPlayground().getPlaygroundPane().setOnDragEntered(event -> {
+            System.out.println("--------------ENTERED----------------");
+        });
+        gamePane.getPlayground().getPlaygroundPane().setOnDragExited(event -> {
+            System.out.println("---------------EXITED--------------");
+        });
+
         gamePane.getPlayground().getPlaygroundPane().setOnMousePressed(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 System.out.println(mouseEvent.getX() + " " + mouseEvent.getY());
                 double posX = mouseEvent.getX() / gamePane.getPlayground().getPlaygroundPane().getWidth();
                 double posY = mouseEvent.getY() / gamePane.getPlayground().getPlaygroundPane().getHeight();
                 System.out.println(posX + "% & " + (1 - posY) + "%");
-                gameLogic.addBlock(2, posX, (1 - posY));
+                gameLogic.addBlock(4, posX, (1 - posY));
             } else if (mouseEvent.getButton() == MouseButton.SECONDARY) {
                 gamePane.getPlayground().runEffect(mouseEvent.getX(), mouseEvent.getY());
             }
@@ -66,16 +75,13 @@ public class GameHandler {
 //                System.out.println("hello frame:" + frameCount);
                 long delta = now - lastUpdate;
                 double deltaSeconds = delta / 1000000000.0;
-                if (gameLogic.update(deltaSeconds)) {
-//                    System.out.println("STEPPED");
-                    gameState = gameLogic.createGameState();
-//                    System.out.println(gameState);
-                    gamePane.paint(gameState);
-                } else {
-                    System.out.println("NOT stepped");
-                }
-                lastUpdate = now;
+                gameLogic.update(deltaSeconds);
 
+                gameState = gameLogic.createGameState();
+
+                gamePane.paint(gameState);
+
+                lastUpdate = now;
             }
         };
 //        animationTimer
