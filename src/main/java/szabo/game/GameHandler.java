@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Point2D;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 
 import java.io.File;
@@ -33,27 +34,9 @@ public class GameHandler {
         existingGameProperty = new SimpleBooleanProperty();
         updateExistingGameProperty();
 
-        gamePane.getPlayground().getPlaygroundPane().setOnMouseDragged(event -> {
-            System.out.println("knuckle dragging twat: " + event.getX() + ", " + event.getY());
-        });
-        gamePane.getPlayground().getPlaygroundPane().setOnDragEntered(event -> {
-            System.out.println("--------------ENTERED----------------");
-        });
-        gamePane.getPlayground().getPlaygroundPane().setOnDragExited(event -> {
-            System.out.println("---------------EXITED--------------");
-        });
+        setupMouseControl();
+        setupKeyboardControl();
 
-        gamePane.getPlayground().getPlaygroundPane().setOnMousePressed(mouseEvent -> {
-            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                System.out.println(mouseEvent.getX() + " " + mouseEvent.getY());
-                double posX = mouseEvent.getX() / gamePane.getPlayground().getPlaygroundPane().getWidth();
-                double posY = mouseEvent.getY() / gamePane.getPlayground().getPlaygroundPane().getHeight();
-                System.out.println(posX + "% & " + (1 - posY) + "%");
-                gameLogic.addBlock(4, posX, (1 - posY));
-            } else if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-                gamePane.getPlayground().runEffect(mouseEvent.getX(), mouseEvent.getY());
-            }
-        });
 //        Timeline ok = new Timeline(new KeyFrame(Duration.millis(16), (event) -> {
 //
 //        }));
@@ -85,6 +68,53 @@ public class GameHandler {
             }
         };
 //        animationTimer
+    }
+
+    private void setupMouseControl() {
+        gamePane.getPlayground().getPlaygroundPane().setOnMouseDragged(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                double posX = event.getX() / gamePane.getPlayground().getPlaygroundPane().getWidth();
+                gameLogic.handleMouseB1Dragged(posX);
+            }
+        });
+
+        gamePane.getPlayground().getPlaygroundPane().setOnMousePressed(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                double posX = event.getX() / gamePane.getPlayground().getPlaygroundPane().getWidth();
+                double posY = event.getY() / gamePane.getPlayground().getPlaygroundPane().getHeight();
+                gameLogic.handleMouseB1Pressed(posX, (1 - posY));
+            } else if (event.getButton() == MouseButton.SECONDARY) {
+                gamePane.getPlayground().runEffect(event.getX(), event.getY());
+            }
+        });
+
+        gamePane.getPlayground().getPlaygroundPane().setOnMouseReleased(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                gameLogic.handleMouseB1Released();
+            }
+        });
+    }
+
+    // TODO exit to menu using ESCAPE
+    private void setupKeyboardControl() {
+        gamePane.getPlayground().getPlaygroundPane().setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case LEFT -> {
+                    gameLogic.moveBlock(false);
+                    event.consume();
+                }
+                case RIGHT -> {
+                    gameLogic.moveBlock(true);
+                    event.consume();
+                }
+                case SPACE, DOWN -> {
+                    gameLogic.keyboardReleaseBlock();
+                    event.consume();
+                }
+                case UP -> event.consume();
+//                case ESCAPE ->
+            }
+        });
     }
 
     public void startGame(boolean useExisting) {

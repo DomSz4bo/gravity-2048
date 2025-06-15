@@ -28,8 +28,14 @@ public class Playground extends StackPane {
                 )
         )));
         paintDeathLine();
+        fixAspectRatio();
         testingEvents();
         playgroundPane.widthProperty().addListener(e -> resizeBlocks());
+        playgroundPane.setFocusTraversable(true);
+//        playgroundPane.setOnMouseClicked(event -> {
+//            playgroundPane.requestFocus();
+//            System.out.println("playgroundPane");
+//        });
     }
 
     // TODO remove after testing
@@ -40,13 +46,15 @@ public class Playground extends StackPane {
                         + "\nWidth=" + playgroundPane.getWidth() + " Height=" + playgroundPane.getHeight()
                 )
         );
+    }
 
+    private void fixAspectRatio() {
         playgroundPane.maxWidthProperty().bind(Bindings.createDoubleBinding(
                 () -> Math.min(getWidth(), getHeight() * GameHandler.PLAYGROUND_RATIO),
                 widthProperty(),  heightProperty()
         ));
         playgroundPane.maxHeightProperty().bind(Bindings.createDoubleBinding(
-                () -> Math.min(getHeight(), getWidth() / GameHandler. PLAYGROUND_RATIO),
+                () -> Math.min(getHeight(), getWidth() / GameHandler.PLAYGROUND_RATIO),
                 heightProperty(),  widthProperty()
         ));
     }

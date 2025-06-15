@@ -1,6 +1,7 @@
 package szabo.game;
 
 import javafx.geometry.Point2D;
+import javafx.scene.input.MouseButton;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.Settings;
 import org.dyn4j.geometry.Geometry;
@@ -14,16 +15,18 @@ import java.util.Random;
 public class GameLogic {
     private static final double PHYSICS_HEIGHT = 5;         // height in meters - affects physics scale
     private static final long RELEASE_DELAY = 500;          // ms delay of next block generation
-    public static final double BLOCK_START_HEIGHT = 0.9 * PHYSICS_HEIGHT;    // from top of Height
+    private static final double BLOCK_START_HEIGHT = 0.9 * PHYSICS_HEIGHT;
 
     private final World<Body> world;
     private final double width = GameHandler.PLAYGROUND_RATIO * PHYSICS_HEIGHT;
     private final double height = PHYSICS_HEIGHT;
+    private final double blockSize = GameHandler.BLOCK_SIZE * width;
 
     private int score;
     private int maxBlockValueExponent = 1;
     private BlockBody blockToPosition;
     private long releaseTime = System.currentTimeMillis();
+    private boolean beingDragged = false;
 
     public GameLogic() {
         world = new World<>();
@@ -36,6 +39,7 @@ public class GameLogic {
 
     public void update(double elapsedTime) {
         world.update(elapsedTime);
+//        System.out.println("Elapsed time: " + elapsedTime);
         if (blockToPosition == null) {
             long now = System.currentTimeMillis();
             long deltaTime = now - releaseTime;
@@ -46,7 +50,7 @@ public class GameLogic {
 //        printBlocks();
     }
 
-    public void addBlock(int value, double posX, double posY) {
+    private void addBlock(int value, double posX, double posY) {
         BlockBody block = new BlockBody(value);
         block.translate(posX * width, posY * height);
         world.addBody(block);
@@ -92,7 +96,69 @@ public class GameLogic {
         blockToPosition.translate(width / 2, BLOCK_START_HEIGHT);
     }
 
+    private double dragOffsetX;
+
+    // MOUSE CONTROL
+    public void handleMouseB1Pressed(double posX, double posY) {
+        if (blockToPosition == null) return;
+        double worldX = posX * width;
+        double worldY = posY * height;
+        if (blockToPosition.contains(new Vector2(worldX, worldY))) {
+            System.out.println("===========HIT=============: " + worldX + ", " + worldY);
+            beingDragged = true;
+            dragOffsetX = worldX - blockToPosition.getTransform().getTranslationX();
+        }
+    }
+    public void handleMouseB1Released() {
+        if (beingDragged) {
+            releasePositionedBlock();
+            beingDragged = false;
+        }
+
+    }
+    public void handleMouseB1Dragged(double posX) {
+        if (beingDragged) {
+            double worldX = posX * width - dragOffsetX;
+            blockToPosition.getTransform().setTranslation(
+                    getWallConstrainedX(worldX),
+                    BLOCK_START_HEIGHT
+            );
+        }
+    }
+
+    // KEYBOARD CONTROL
+    public void moveBlock(boolean right) {
+        if (!beingDragged && blockToPosition != null) {
+            double blockX = blockToPosition.getTransform().getTranslationX();
+            double movementDistance = width / 100;
+            double movedX = blockX + (right ? movementDistance : -movementDistance);
+            blockToPosition.getTransform().setTranslation(
+                    getWallConstrainedX(movedX),
+                    BLOCK_START_HEIGHT
+            );
+        }
+    }
+    public void keyboardReleaseBlock() {
+        if (!beingDragged) {
+            releasePositionedBlock();
+        }
+    }
+
+    private double getWallConstrainedX(double worldX) {
+        double wallOffset = GameHandler.WALL_THICKNESS * width + blockSize / 2;
+        return Math.min(width - wallOffset , Math.max(wallOffset, worldX));
+    }
+
+
+    private void releasePositionedBlock() {
+        world.addBody(blockToPosition);
+        releaseTime = System.currentTimeMillis();
+        blockToPosition = null;
+    }
+
+
     // TODO add collision and merging logic
+
 
 
 
@@ -108,7 +174,7 @@ public class GameLogic {
             this.value = value;
             // config
             // TODO pull out into constants
-            addFixture(Geometry.createSquare(GameHandler.BLOCK_SIZE * width), 1.0, 0.8, 0.3);
+            addFixture(Geometry.createSquare(blockSize), 1.0, 0.8, 0.3);
             setMass(MassType.NORMAL);
             setAngularDamping(2);
             setLinearDamping(1);
