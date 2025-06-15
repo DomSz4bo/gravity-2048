@@ -17,6 +17,7 @@ public class GameHandler {
     public static final double PLAYGROUND_RATIO = 0.7;      // width : height
     public static final double WALL_THICKNESS = 0.01;           // % of Playground
     public static final double BLOCK_SIZE = 0.18;           // % of Playground Width
+    public static final double LINE_POSITION = 0.2;  // % of playground height
     private static final String GAME_SAVE = "saved_game.dat";
 
     private final BooleanProperty existingGameProperty;
@@ -36,6 +37,13 @@ public class GameHandler {
 
         setupMouseControl();
         setupKeyboardControl();
+
+        gameLogic.setOnMerged(
+                (newValue, posX, posY) -> {
+                    System.out.println("Merging " + posX + " " + posY);
+                    gamePane.getPlayground().runEffect(newValue, posX, (1 - posY));
+                }
+        );
 
 //        Timeline ok = new Timeline(new KeyFrame(Duration.millis(16), (event) -> {
 //
@@ -84,7 +92,7 @@ public class GameHandler {
                 double posY = event.getY() / gamePane.getPlayground().getPlaygroundPane().getHeight();
                 gameLogic.handleMouseB1Pressed(posX, (1 - posY));
             } else if (event.getButton() == MouseButton.SECONDARY) {
-                gamePane.getPlayground().runEffect(event.getX(), event.getY());
+                gamePane.getPlayground().runEffect(2, event.getX(), event.getY());
             }
         });
 

@@ -11,7 +11,23 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Playground extends StackPane {
-    private static final double LINE_POSITION = 0.2;  // % of playground height
+    private final static String[] hexCodes = new String[] {
+            "#FFE285", "#FFCD29", "#FFA333", "#ED6542", "#FC9FBE", "#A778FF",
+            "#6D4DFF", "#61ABFF", "#1F87FF", "#00D483", "#20AD00", "#126100",
+            "#8C2800", "#660000", "#870063", "#510061", "#510061", "#20488C"
+    };
+    private final static HashMap<Integer, Color> colors;
+    static {
+        colors = HashMap.newHashMap(hexCodes.length);
+        int key = 1;
+        for (String hexCode : hexCodes) {
+            colors.put(key, Color.web(hexCode));
+            key <<= 1;
+        }
+    }
+    public static Color getColor(int key) {
+        return colors.get(key);
+    }
 
     private final Pane playgroundPane = new Pane();
     private final HashMap<Integer, BlockShape> blockMap = new HashMap<>();
@@ -63,8 +79,10 @@ public class Playground extends StackPane {
         Line line = new Line(0, 20, playgroundPane.getWidth(), 20);
         line.setStroke(Color.WHITE);
         line.endXProperty().bind(playgroundPane.widthProperty());
-        line.startYProperty().bind(playgroundPane.heightProperty().multiply(LINE_POSITION));
-        line.endYProperty().bind(playgroundPane.heightProperty().multiply(LINE_POSITION));
+        line.startYProperty().bind(playgroundPane.heightProperty()
+                .multiply(GameHandler.LINE_POSITION));
+        line.endYProperty().bind(playgroundPane.heightProperty()
+                .multiply(GameHandler.LINE_POSITION));
         playgroundPane.getChildren().add(line);
     }
 
@@ -113,13 +131,15 @@ public class Playground extends StackPane {
     }
 
 
-    public void runEffect(double posX, double posY) {
+    public void runEffect(int blockValue, double posX, double posY) {
         double particleSize = playgroundPane.getWidth() / 100;
         double radius = playgroundPane.getWidth() / 60;
         double travel = playgroundPane.getWidth() / 3;
+        double x = posX * playgroundPane.getWidth();
+        double y = posY * playgroundPane.getHeight();
         Confetti con = new Confetti(
                 particleSize, particleSize * 2, 100, playgroundPane,
-                posX ,posY, radius, travel
+                x , y, radius, travel, getColor(blockValue)
         );
         con.runEffect();
     }

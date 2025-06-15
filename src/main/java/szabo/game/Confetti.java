@@ -21,12 +21,13 @@ public class Confetti {
     // TODO
     //  * make travel a radius so that it has a circular shape
     //  * make it so that the Color is corresponding to the Block being created or merged
-    public Confetti(double particleWidth, double particleHeight, int count, Pane parent, double x, double y, double radius, double maxTravel) {
+    public Confetti(double particleWidth, double particleHeight, int count, Pane parent,
+                    double x, double y, double radius, double maxTravel, Color color) {
         MAX_DISTANCE = maxTravel;
         for (int i = 0; i < count; i++) {
             double px = x + random.nextDouble(-radius, radius);
             double py = y + random.nextDouble(-radius, radius);
-            var particle = new ConfettiParticle(px, py, particleWidth, particleHeight);
+            var particle = new ConfettiParticle(px, py, particleWidth, particleHeight, color);
             parent.getChildren().add(particle);
             particle.onFinishedRemoveFrom(parent);
             particles.add(particle);
@@ -42,9 +43,9 @@ public class Confetti {
     private class ConfettiParticle extends Rectangle {
         private final TranslateTransition translateTransition;
         private final FadeTransition fadeTransition;
-        private ConfettiParticle(double x, double y, double width, double height) {
+        private ConfettiParticle(double x, double y, double width, double height, Color color) {
             super(x, y, width, height);
-            setFill(getRandomColor());
+            setFill((color == null) ? getRandomColor() : color);
             setRotate(random.nextInt(360));
 
             translateTransition = new TranslateTransition(Duration.millis(DURATION), this);

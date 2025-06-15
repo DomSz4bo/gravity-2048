@@ -13,31 +13,17 @@ import java.util.HashMap;
 
 
 public class BlockShape extends StackPane {
-    private final static String[] hexCodes = new String[] {
-            "#FFE285", "#FFCD29", "#FFA333", "#ED6542", "#FC9FBE", "#A778FF",
-            "#6D4DFF", "#61ABFF", "#1F87FF", "#00D483", "#20AD00", "#126100",
-            "#8C2800", "#660000", "#870063", "#510061", "#510061"
-    };
-    private final static HashMap<Integer, Color> colors;
-    static {
-        colors = HashMap.newHashMap(hexCodes.length);
-        int key = 1;
-        for (String hexCode : hexCodes) {
-            colors.put(key, Color.web(hexCode));
-            key <<= 1;
-        }
-    }
 
-    private int value;
     private final Rectangle rectangle =  new Rectangle();
     private final Text text = new Text();
+    private final int value;
 
     public BlockShape(int value) {
         super();
-        if (!colors.containsKey(value)) {
+        if (Playground.getColor(value) == null) {
             throw new IllegalArgumentException("Value " + value + " is not a valid block value.");
         }
-        rectangle.setFill(colors.get(value));
+        rectangle.setFill(Playground.getColor(value));
         rectangle.setStroke(Color.BLACK);
         text.setFill(Color.BLACK);
         text.setText(Integer.toString(value));
@@ -49,7 +35,17 @@ public class BlockShape extends StackPane {
         rectangle.setWidth(size);
         rectangle.setHeight(size);
         rectangle.setStrokeWidth(size/100);
-        text.setFont(Font.font("Verdana", FontWeight.BOLD, size / 3));
+        text.setFont(Font.font("Verdana", FontWeight.BOLD, getFontSize(size)));
+    }
+
+    private double getFontSize(double blockSize) {
+        if (value < 10_000) {
+            return blockSize / 3;
+        } else if (value < 100_000) {
+            return blockSize / 4;
+        } else {
+            return blockSize / 5;
+        }
     }
 
     public void setCenterPosition(double x, double y) {
