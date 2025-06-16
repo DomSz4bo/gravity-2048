@@ -37,5 +37,6 @@ public class GameApp extends Application {
         super.stop();
         System.out.println("Application stopped");
         manager.saveGame();
+        manager.getLeaderboard().save();
     }
 }

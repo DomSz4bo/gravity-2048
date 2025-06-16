@@ -52,10 +52,12 @@ public class GameLogic {
     }
 //    private final Queue<CollisionRecord> mergeQueue = new ArrayDeque<>();
     private final PriorityQueue<CollisionRecord> mergeQueue = new PriorityQueue<>();
+    private final Runnable onGameOver;
 
-    public GameLogic() {
+    public GameLogic(Runnable onGameOver) {
         world = new World<>();
         score = 0;
+        this.onGameOver = onGameOver;
         initializeNewBlockToPosition();
         System.out.println("World width: " + this.width + "   height: " + this.height);
         System.out.println("Gravity: " + world.getGravity());
@@ -114,12 +116,6 @@ public class GameLogic {
             }
         }
 //        printBlocks();
-    }
-
-    private void addBlock(int value, double posX, double posY) {
-        BlockBody block = new BlockBody(value);
-        block.translate(posX * width, posY * height);
-        world.addBody(block);
     }
 
     private void createBlockContainer() {
@@ -218,10 +214,23 @@ public class GameLogic {
 
 
     private void releasePositionedBlock() {
-        world.addBody(blockToPosition);
-        releaseTime = System.currentTimeMillis();
-        blockToPosition = null;
+        if (gameOver()) {
+            System.out.println("GAME OVER");
+            onGameOver.run();
+        } else {
+            world.addBody(blockToPosition);
+            releaseTime = System.currentTimeMillis();
+            blockToPosition = null;
+        }
     }
+
+    private boolean gameOver() {
+        double lineY = (1 - GameHandler.LINE_POSITION) * height;
+        return world.getBodies().stream()
+                .filter(body -> body instanceof BlockBody)
+                .anyMatch(block -> block.createAABB().getMaxY() >= lineY);
+    }
+
 
 
     //  BLOCK MERGING

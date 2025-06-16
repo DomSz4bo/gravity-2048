@@ -69,7 +69,7 @@ public class Leaderboard {
         }
     }
 
-    private void saveEntries() {
+    public void save() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (ScoreEntry entry : entries) {
                 bw.write(entry.score() + "#" + entry.name());
@@ -77,7 +77,6 @@ public class Leaderboard {
             }
         } catch (IOException e) {
             System.err.println("Failed to save Leaderboard: " + e.getMessage());
-//            throw new RuntimeException(e);
         }
     }
 
