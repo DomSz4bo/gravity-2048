@@ -91,8 +91,11 @@ public class GameHandler {
                 double posX = event.getX() / gamePane.getPlayground().getPlaygroundPane().getWidth();
                 double posY = event.getY() / gamePane.getPlayground().getPlaygroundPane().getHeight();
                 gameLogic.handleMouseB1Pressed(posX, (1 - posY));
+                // TODO remove the effect generation
             } else if (event.getButton() == MouseButton.SECONDARY) {
-                gamePane.getPlayground().runEffect(2, event.getX(), event.getY());
+                double posX = event.getX() / gamePane.getPlayground().getPlaygroundPane().getWidth();
+                double posY = event.getY() / gamePane.getPlayground().getPlaygroundPane().getHeight();
+                gamePane.getPlayground().runEffect(2, posX, posY);
             }
         });
 

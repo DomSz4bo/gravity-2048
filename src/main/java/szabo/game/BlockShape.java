@@ -32,8 +32,9 @@ public class BlockShape extends StackPane {
     }
 
     public void setSize(double size) {
-        rectangle.setWidth(size);
-        rectangle.setHeight(size);
+        double appliedSize = size * 0.97;   // to combat overlap of blocks
+        rectangle.setWidth(appliedSize);
+        rectangle.setHeight(appliedSize);
         rectangle.setStrokeWidth(size/100);
         text.setFont(Font.font("Verdana", FontWeight.BOLD, getFontSize(size)));
     }

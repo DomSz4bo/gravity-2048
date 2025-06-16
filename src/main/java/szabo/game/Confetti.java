@@ -36,7 +36,7 @@ public class Confetti {
     private Color getRandomColor() {
         return Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
     }
-    public void runEffect() {
+    public void start() {
         particles.forEach(ConfettiParticle::animate);
     }
 
@@ -47,21 +47,25 @@ public class Confetti {
             super(x, y, width, height);
             setFill((color == null) ? getRandomColor() : color);
             setRotate(random.nextInt(360));
+            int direction = random.nextInt(360);
+            double travelDistance = random.nextDouble(0.2, 1.0) * MAX_DISTANCE;
+            double travelX = Math.cos(direction) * travelDistance;
+            double travelY = Math.sin(direction) * travelDistance;
 
             translateTransition = new TranslateTransition(Duration.millis(DURATION), this);
-            translateTransition.setByX(random.nextDouble(-1.0, 1.0) * MAX_DISTANCE);
-            translateTransition.setByY(random.nextDouble(-1.0, 1.0) * MAX_DISTANCE);
-            translateTransition.setInterpolator(Interpolator.LINEAR);
+            translateTransition.setByX(travelX);
+            translateTransition.setByY(travelY);
+            translateTransition.setInterpolator(Interpolator.EASE_OUT);
 
-            fadeTransition = new FadeTransition(Duration.millis(DURATION), this);
+            fadeTransition = new FadeTransition(Duration.millis(DURATION * 0.3), this);
             fadeTransition.setFromValue(1.0);
             fadeTransition.setToValue(0.0);
-            fadeTransition.setInterpolator(Interpolator.EASE_IN);
+//            fadeTransition.setInterpolator(Interpolator.EASE_OUT);
+            fadeTransition.setDelay(Duration.millis(DURATION * 0.7));
         }
         private void onFinishedRemoveFrom(Pane parent) {
             translateTransition.setOnFinished(event -> parent.getChildren().remove(this));
         }
-
         private void animate() {
             translateTransition.play();
             fadeTransition.play();

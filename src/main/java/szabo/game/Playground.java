@@ -130,18 +130,20 @@ public class Playground extends StackPane {
         }
     }
 
-
     public void runEffect(int blockValue, double posX, double posY) {
+        int exp = 31 - Integer.numberOfLeadingZeros(blockValue);
+        double mod = Math.min(1, exp / 15.0);
         double particleSize = playgroundPane.getWidth() / 100;
         double radius = playgroundPane.getWidth() / 60;
-        double travel = playgroundPane.getWidth() / 3;
+        double travel = playgroundPane.getWidth() / (1.7 + 3 * (1 - mod));
         double x = posX * playgroundPane.getWidth();
         double y = posY * playgroundPane.getHeight();
-        Confetti con = new Confetti(
-                particleSize, particleSize * 2, 100, playgroundPane,
+        int particleCount = 50 + (int) (200 * mod);
+        Confetti confetti = new Confetti(
+                particleSize, particleSize * 2, particleCount, playgroundPane,
                 x , y, radius, travel, getColor(blockValue)
         );
-        con.runEffect();
+        confetti.start();
     }
 
 }

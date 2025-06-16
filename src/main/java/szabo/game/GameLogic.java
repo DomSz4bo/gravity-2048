@@ -18,7 +18,7 @@ import java.util.*;
 
 
 public class GameLogic {
-    private static final double PHYSICS_HEIGHT = 5;         // height in meters - affects physics scale
+    private static final double PHYSICS_HEIGHT = 3;         // height in meters - affects physics scale
     private static final long RELEASE_DELAY = 500;          // ms delay of next block generation
     private static final double BLOCK_START_HEIGHT = 0.9 * PHYSICS_HEIGHT;
     private static final int MAX_BLOCK_VALUE = 131072;
@@ -151,8 +151,8 @@ public class GameLogic {
     }
 
     private BlockBody generateBlock() {
-//        return new BlockBody(generateBlockValue());
-        return new BlockBody(2);
+        return new BlockBody(generateBlockValue());
+//        return new BlockBody(2);
     }
 
     private final Random random = new Random();
@@ -341,7 +341,7 @@ public class GameLogic {
             addFixture(Geometry.createSquare(blockSize), 1.0, 0.8, 0.3);
             setMass(MassType.NORMAL);
             setAngularDamping(2);
-            setLinearDamping(1);
+//            setLinearDamping(1);
         }
 
         private Point2D getPercentagePosition() {
