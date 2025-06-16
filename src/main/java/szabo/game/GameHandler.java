@@ -152,6 +152,7 @@ public class GameHandler {
     }
 
     private void returnToMenu() {
+        updateExistingGameProperty();
         animationTimer.stop();
         manager.showMenu();
     }

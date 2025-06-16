@@ -17,7 +17,7 @@ import java.util.*;
 
 public class GameLogic {
     private static final double PHYSICS_HEIGHT = 3;         // height in meters - affects physics scale
-    private static final long RELEASE_DELAY = 500;          // ms delay of next block generation
+    private static final long NEW_BLOCK_DELAY = 500;          // ms delay of next block generation
     private static final double BLOCK_START_HEIGHT = 0.9 * PHYSICS_HEIGHT;
     private static final int MAX_BLOCK_VALUE = 131072;
 
@@ -106,12 +106,10 @@ public class GameLogic {
         if (!mergeQueue.isEmpty()) {
             mergeQueuedCollisions();
         }
-
-//        System.out.println("Elapsed time: " + elapsedTime);
         if (blockToPosition == null) {
             long now = System.currentTimeMillis();
             long deltaTime = now - releaseTime;
-            if (deltaTime > RELEASE_DELAY) {
+            if (deltaTime > NEW_BLOCK_DELAY) {
                 initializeNewBlockToPosition();
             }
         }
