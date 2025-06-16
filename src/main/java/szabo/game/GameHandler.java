@@ -23,12 +23,13 @@ public class GameHandler {
     private final GamePane gamePane;
     private GameState gameState = null;
     private final GameLogic gameLogic;
-
     private final AnimationTimer animationTimer;
+    private final AppManager manager;
 
     public GameHandler(AppManager appManager) {
         super();
-        gamePane = new GamePane(appManager);
+        manager = appManager;
+        gamePane = new GamePane(this::returnToMenu);
         gameLogic = new GameLogic();
         existingGameProperty = new SimpleBooleanProperty();
         updateExistingGameProperty();
@@ -57,7 +58,7 @@ public class GameHandler {
                 double deltaSeconds = (double) deltaNanos / NANOS_IN_SECOND;
                 gameLogic.update(deltaSeconds);
                 gameState = gameLogic.createGameState();
-                gamePane.paint(gameState);
+                gamePane.paint(gameState, appManager.getLeaderboard());
                 lastUpdate = now;
             }
         };
@@ -109,7 +110,7 @@ public class GameHandler {
                     event.consume();
                 }
                 case UP -> event.consume();
-//                case ESCAPE ->
+//                case ESCAPE, BACK_SPACE ->
             }
         });
     }
@@ -118,13 +119,15 @@ public class GameHandler {
         if (useExisting && gameState == null) {
             try {
                 gameState = GameState.load(GAME_SAVE);
-//                gameLogic.loadGameState(gameState);
+                gameLogic.loadGameState(gameState);
                 System.out.println("Loaded existing game");
             } catch (ClassNotFoundException | IOException e) {
                 System.err.println("Failed to load game: " + e.getMessage());
             }
-        } else  {
+        } else if (!useExisting) {
             System.out.println("Started new game");
+            gameState = null;
+            gameLogic.resetLogic();
         }
         // start animation
         animationTimer.start();
@@ -133,6 +136,11 @@ public class GameHandler {
     public GamePane getGamePane() {
         return gamePane;
     }
+    public void saveGameState() {
+        if (gameState != null) {
+            gameState.save(GAME_SAVE);
+        }
+    }
     public BooleanProperty existingGameProperty() {
         return existingGameProperty;
     }
@@ -140,5 +148,10 @@ public class GameHandler {
     private void updateExistingGameProperty() {
         var file = new File(GAME_SAVE);
         existingGameProperty.set(file.exists() || gameState != null);
+    }
+
+    private void returnToMenu() {
+        animationTimer.stop();
+        manager.showMenu();
     }
 }

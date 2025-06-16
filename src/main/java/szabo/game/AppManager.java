@@ -53,4 +53,7 @@ public class AppManager extends StackPane {
         return leaderboard;
     }
 
+    public void saveGame() {
+        gameHandler.saveGameState();
+    }
 }

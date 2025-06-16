@@ -38,7 +38,6 @@ public class GameState implements Serializable {
         return blocks;
     }
 
-
     public static GameState load(String gameSaveFile) throws ClassNotFoundException, IOException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(gameSaveFile))) {
             return (GameState) ois.readObject();

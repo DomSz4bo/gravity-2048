@@ -1,5 +1,6 @@
 package szabo.game;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Insets;
@@ -31,7 +32,7 @@ public class MenuPane extends VBox {
         playButton.setOnAction(e -> appManager.loadGame(true));
         newGameButton.setOnAction(e -> appManager.loadGame(false));
         leaderboardButton.setOnAction(e -> appManager.showLeaderboard());
-        exitButton.setOnAction(e -> System.exit(0));
+        exitButton.setOnAction(e -> Platform.exit());
         buttons.addAll(List.of(playButton, newGameButton, leaderboardButton, exitButton));
 
         DoubleBinding minDimension =  Bindings.createDoubleBinding(() ->

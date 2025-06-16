@@ -1,5 +1,7 @@
 package szabo.game;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,17 +15,12 @@ public class GamePane extends BorderPane {
     private static final String SCORE = "Score: ";
     private static final String HIGH_SCORE = "High Score: ";
 
-    private final Leaderboard leaderboard;
     private final Label scoreLabel = new Label();
     private final Label highScoreLabel = new Label();
     private final Playground playground = new Playground();
 
-    private boolean beingDragged = false;
-
-    public GamePane(AppManager manager) {
+    public GamePane(Runnable onExit) {
         super();
-        leaderboard = manager.getLeaderboard();
-
 //        setPadding(new Insets(0, 5, 0, 5));
 
         scoreLabel.setStyle("-fx-font-size: 25");
@@ -37,8 +34,7 @@ public class GamePane extends BorderPane {
 
         var exitButton = new Button("Back to Menu");
         exitButton.setStyle("-fx-font-size: 25");
-        exitButton.setOnAction(e -> manager.showMenu());
-
+        exitButton.setOnAction(event -> onExit.run());
 
         var scorePane = new HBox(highScoreLabel, scoreLabel, exitButton);
 //        scorePane.setBackground(Background.fill(Color.ORANGE));
@@ -52,7 +48,7 @@ public class GamePane extends BorderPane {
 
     }
 
-    public void paint(GameState gameState) {
+    public void paint(GameState gameState, Leaderboard leaderboard) {
         scoreLabel.setText(SCORE + gameState.getScore());
         highScoreLabel.setText(HIGH_SCORE + leaderboard.getHighScore());
         playground.paintBlocks(gameState.getAllBlocks());

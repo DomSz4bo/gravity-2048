@@ -27,8 +27,8 @@ public class GameLogic {
     private final double blockSize = GameHandler.BLOCK_SIZE * width;
 
     private int score;
-    private int highestBlockValue = 2;      // TODO maybe make it a property so a notification can be added
-    private BlockBody blockToPosition;          // TODO maybe rename
+    private int highestBlockValue = 2;          // TODO not used - maybe remove
+    private BlockBody blockToPosition;          // TODO maybe RENAME
     private long releaseTime = System.currentTimeMillis();
     private boolean beingDragged = false;
 
@@ -56,7 +56,7 @@ public class GameLogic {
     public GameLogic() {
         world = new World<>();
         score = 0;
-        setNewBlockToPosition();
+        initializeNewBlockToPosition();
         System.out.println("World width: " + this.width + "   height: " + this.height);
         System.out.println("Gravity: " + world.getGravity());
         createBlockContainer();
@@ -112,7 +112,7 @@ public class GameLogic {
             long now = System.currentTimeMillis();
             long deltaTime = now - releaseTime;
             if (deltaTime > RELEASE_DELAY) {
-                setNewBlockToPosition();
+                initializeNewBlockToPosition();
             }
         }
 //        printBlocks();
@@ -160,7 +160,7 @@ public class GameLogic {
         return random.nextInt(10) < 7 ? 2 : 4;
     }
 
-    private void setNewBlockToPosition() {
+    private void initializeNewBlockToPosition() {
         blockToPosition = generateBlock();
         blockToPosition.translate(width / 2, BLOCK_START_HEIGHT);
     }
@@ -402,18 +402,35 @@ public class GameLogic {
     }
 
     private void clearWorldBlocks() {
-        world.getBodies().removeIf(b -> b instanceof BlockBody);
+        world.getBodies().stream().filter(b -> b instanceof BlockBody)
+                .toList().forEach(world::removeBody);
     }
 
     private BlockBody createBlockFromState(GameState.BlockState blockState) {
         BlockBody block = new BlockBody(blockState.value());
-//        blockState.position();
-        return null;
+        block.translate(blockState.posX() * width, blockState.posY() * height);
+        block.rotate(blockState.angleRadians());
+        block.setLinearVelocity(blockState.velocityX(), blockState.velocityY());
+        block.setAngularVelocity(blockState.angularVelocity());
+        return block;
     }
 
     public void loadGameState(GameState gameState) {
+        System.out.println("Loading game state...\n" + gameState);
         clearWorldBlocks();
-        gameState.getBlocks();
+        gameState.getBlocks().forEach(block -> world.addBody(createBlockFromState(block)));
+        if (gameState.getActiveBlock() == null) {
+            releaseTime = System.currentTimeMillis();
+        } else {
+            blockToPosition = createBlockFromState(gameState.getActiveBlock());
+        }
+        score = gameState.getScore();
+    }
+
+    public void resetLogic() {
+        clearWorldBlocks();
+        blockToPosition = null;
+        score = 0;
     }
 
 

@@ -8,13 +8,13 @@ import javafx.stage.Stage;
 import java.util.Objects;
 
 public class GameApp extends Application {
-
+    private AppManager manager;
 
     @Override
     public void start(Stage primaryStage) {
 
-        AppManager appManager = new AppManager();
-        Scene scene = new Scene(appManager, 1000, 800);
+        manager = new AppManager();
+        Scene scene = new Scene(manager, 1000, 800);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm());
 
         primaryStage.setScene(scene);
@@ -35,5 +35,7 @@ public class GameApp extends Application {
     @Override
     public void stop() throws Exception {
         super.stop();
+        System.out.println("Application stopped");
+        manager.saveGame();
     }
 }
