@@ -409,7 +409,7 @@ public class GameLogic {
     private BlockBody createBlockFromState(GameState.BlockState blockState) {
         BlockBody block = new BlockBody(blockState.value());
         block.translate(blockState.posX() * width, blockState.posY() * height);
-        block.rotate(blockState.angleRadians());
+        block.getTransform().setRotation(blockState.angleRadians());
         block.setLinearVelocity(blockState.velocityX(), blockState.velocityY());
         block.setAngularVelocity(blockState.angularVelocity());
         return block;

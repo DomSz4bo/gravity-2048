@@ -110,7 +110,7 @@ public class GameHandler {
                     event.consume();
                 }
                 case UP -> event.consume();
-//                case ESCAPE, BACK_SPACE ->
+                case ESCAPE, BACK_SPACE -> returnToMenu();
             }
         });
     }
@@ -139,6 +139,7 @@ public class GameHandler {
     public void saveGameState() {
         if (gameState != null) {
             gameState.save(GAME_SAVE);
+            System.out.println("Saved game:" + gameState);
         }
     }
     public BooleanProperty existingGameProperty() {
