@@ -1,12 +1,10 @@
 package szabo.game;
 
-import javafx.geometry.Point2D;
 import org.dyn4j.collision.manifold.ManifoldPoint;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Geometry;
 import org.dyn4j.geometry.MassType;
-import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.BroadphaseCollisionData;
 import org.dyn4j.world.ManifoldCollisionData;
@@ -326,9 +324,6 @@ public class GameLogic {
 
 
 
-
-
-
     private class BlockBody extends Body {
         private static int blockCount = 0;
         private final int IDNumber = blockCount++;
@@ -343,26 +338,22 @@ public class GameLogic {
             setAngularDamping(2);
 //            setLinearDamping(1);
         }
-
-        private Point2D getPercentagePosition() {
-            return new Point2D(
-                    getTransform().getTranslationX() / width,
-                    getTransform().getTranslationY() / height
-            );
+        private double getPosX() {
+            return getTransform().getTranslationX() / width;
         }
-
+        private double getPosY() {
+            return getTransform().getTranslationY() / height;
+        }
         private int getID() {
             return IDNumber;
         }
         private int getValue() {
             return value;
         }
-
         @Override
         public int hashCode() {
             return Objects.hash(IDNumber, value);
         }
-
         @Override
         public boolean equals(Object o) {
             if (o == null || getClass() != o.getClass()) return false;
@@ -387,9 +378,6 @@ public class GameLogic {
     }
 
 
-
-    /* Maybe separate into a GameStateBuilder (physics -> state) and PhysicsLoader (state -> physics) class */
-    // TODO active block logic
     public GameState createGameState() {
         return new GameState(
                 world.getBodies().stream().filter(b -> b instanceof BlockBody)
@@ -404,7 +392,7 @@ public class GameLogic {
         if (block == null) return null;
         Vector2 linearVelocity = block.getLinearVelocity();
         return new GameState.BlockState(
-                block.getPercentagePosition(),
+                block.getPosX(), block.getPosY(),
                 block.getTransform().getRotationAngle(),
                 linearVelocity.x, linearVelocity.y,
                 block.getAngularVelocity(),
@@ -413,9 +401,19 @@ public class GameLogic {
         );
     }
 
-    // TODO
-    public static GameLogic loadFromGameState(GameState gameState) {
-        return new GameLogic();
+    private void clearWorldBlocks() {
+        world.getBodies().removeIf(b -> b instanceof BlockBody);
+    }
+
+    private BlockBody createBlockFromState(GameState.BlockState blockState) {
+        BlockBody block = new BlockBody(blockState.value());
+//        blockState.position();
+        return null;
+    }
+
+    public void loadGameState(GameState gameState) {
+        clearWorldBlocks();
+        gameState.getBlocks();
     }
 
 

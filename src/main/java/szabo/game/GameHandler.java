@@ -3,13 +3,10 @@ package szabo.game;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.geometry.Point2D;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 // TODO create class for the constants
 
@@ -19,6 +16,7 @@ public class GameHandler {
     public static final double BLOCK_SIZE = 0.18;           // % of Playground Width
     public static final double LINE_POSITION = 0.2;  // % of playground height
     private static final String GAME_SAVE = "saved_game.dat";
+    private static final int NANOS_IN_SECOND = 1_000_000_000;
 
     private final BooleanProperty existingGameProperty;
 
@@ -45,15 +43,8 @@ public class GameHandler {
                 }
         );
 
-//        Timeline ok = new Timeline(new KeyFrame(Duration.millis(16), (event) -> {
-//
-//        }));
-//        ok.setCycleCount(Timeline.INDEFINITE);
-//        ok.play();
         animationTimer = new AnimationTimer() {
-            // maybe limit fps or switch to Timeline
             private long lastUpdate;
-            private long frameCount = 0;
             @Override
             public void start() {
                 super.start();
@@ -62,16 +53,11 @@ public class GameHandler {
 
             @Override
             public void handle(long now) {
-                frameCount++;
-//                System.out.println("hello frame:" + frameCount);
-                long delta = now - lastUpdate;
-                double deltaSeconds = delta / 1000000000.0;
+                long deltaNanos = now - lastUpdate;
+                double deltaSeconds = (double) deltaNanos / NANOS_IN_SECOND;
                 gameLogic.update(deltaSeconds);
-
                 gameState = gameLogic.createGameState();
-
                 gamePane.paint(gameState);
-
                 lastUpdate = now;
             }
         };
@@ -132,19 +118,16 @@ public class GameHandler {
         if (useExisting && gameState == null) {
             try {
                 gameState = GameState.load(GAME_SAVE);
-                System.out.println("Started existing game");
+//                gameLogic.loadGameState(gameState);
+                System.out.println("Loaded existing game");
             } catch (ClassNotFoundException | IOException e) {
                 System.err.println("Failed to load game: " + e.getMessage());
-//                gameState = new GameState();
             }
         } else  {
-//            gameState = new GameState();
             System.out.println("Started new game");
         }
         // start animation
-//        var block = new GameState.BlockState(new Point2D(0.2, 0.3), 0, 0, 0, 1, 2);
         animationTimer.start();
-//        gamePane.paint(gameState);
     }
 
     public GamePane getGamePane() {

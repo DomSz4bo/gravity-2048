@@ -22,7 +22,6 @@ public class GameState implements Serializable {
         this.blocks = List.copyOf(blocks);
         this.score = score;
     }
-
     public List<BlockState> getAllBlocks() {
         if (activeBlock == null) {
             return blocks;
@@ -31,6 +30,12 @@ public class GameState implements Serializable {
     }
     public int getScore() {
         return score;
+    }
+    public BlockState getActiveBlock() {
+        return activeBlock;
+    }
+    public List<BlockState> getBlocks() {
+        return blocks;
     }
 
 
@@ -48,7 +53,7 @@ public class GameState implements Serializable {
         }
     }
 
-    public record BlockState(Point2D position, double angleRadians,
+    public record BlockState(double posX, double posY, double angleRadians,
                              double velocityX, double velocityY,
                              double angularVelocity, int value, int id) implements Serializable {
 

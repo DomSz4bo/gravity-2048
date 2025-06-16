@@ -123,8 +123,8 @@ public class Playground extends StackPane {
                     blockState.id(), id -> createAndAddBlock(blockState.value(), blockSize)
             );
             visualBlock.setCenterPosition(
-                    blockState.position().getX() * playgroundPane.getWidth(),
-                    playgroundPane.getHeight() * (1 - blockState.position().getY())
+                    blockState.posX() * playgroundPane.getWidth(),
+                    playgroundPane.getHeight() * (1 - blockState.posY())
             );
             visualBlock.setRotation(-blockState.angleRadians());
         }
