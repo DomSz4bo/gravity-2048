@@ -6,6 +6,7 @@ import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Geometry;
 import org.dyn4j.geometry.MassType;
+import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.BroadphaseCollisionData;
 import org.dyn4j.world.ManifoldCollisionData;
@@ -33,8 +34,26 @@ public class GameLogic {
     private long releaseTime = System.currentTimeMillis();
     private boolean beingDragged = false;
 
-    private record CollisionRecord(BlockBody blockA, BlockBody blockB, Vector2 contactPoint) {}
-    private final Queue<CollisionRecord> mergeQueue = new ArrayDeque<>();
+    private record CollisionRecord(
+            BlockBody blockA, BlockBody blockB, Vector2 contactPoint
+    ) implements Comparable<CollisionRecord> {
+        @Override
+        public int compareTo(CollisionRecord other) {
+            return Double.compare(
+                    getBlockCenterDistanceSquared(),
+                    other.getBlockCenterDistanceSquared()
+            );
+        }
+        private double getBlockCenterDistanceSquared() {
+            Vector2 centerA = blockA.getTransform().getTranslation();
+            Vector2 centerB = blockB.getTransform().getTranslation();
+            double dx = centerA.x - centerB.x;
+            double dy = centerA.y - centerB.y;
+            return dx * dx + dy * dy;
+        }
+    }
+//    private final Queue<CollisionRecord> mergeQueue = new ArrayDeque<>();
+    private final PriorityQueue<CollisionRecord> mergeQueue = new PriorityQueue<>();
 
     public GameLogic() {
         world = new World<>();
@@ -132,8 +151,8 @@ public class GameLogic {
     }
 
     private BlockBody generateBlock() {
-        return new BlockBody(generateBlockValue());
-//        return new BlockBody(2);
+//        return new BlockBody(generateBlockValue());
+        return new BlockBody(2);
     }
 
     private final Random random = new Random();
