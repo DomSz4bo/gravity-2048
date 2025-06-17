@@ -20,6 +20,13 @@ public class GameLogic {
     private static final long NEW_BLOCK_DELAY = 750;          // ms delay of next block generation
     private static final int MAX_BLOCK_VALUE = 131072;
 
+    // BLOCK BEHAVIOUR
+    public static final double FRICTION = 0.8;
+    private static final double RESTITUTION = 0.3;
+    private static final double ANGULAR_DAMPING = 2.0;
+    private static final double LINEAR_DAMPING = 1.0;
+    public static final double DENSITY = 1.0;
+
     private final World<Body> world;
     private final double width = GameHandler.PLAYGROUND_RATIO * PHYSICS_SCALE;
     private final double height = PHYSICS_SCALE;
@@ -41,6 +48,7 @@ public class GameLogic {
                     other.getBlockCenterDistanceSquared()
             );
         }
+
         private double getBlockCenterDistanceSquared() {
             Vector2 centerA = blockA.getTransform().getTranslation();
             Vector2 centerB = blockB.getTransform().getTranslation();
@@ -49,7 +57,8 @@ public class GameLogic {
             return dx * dx + dy * dy;
         }
     }
-//    private final Queue<CollisionRecord> mergeQueue = new ArrayDeque<>();
+
+    //    private final Queue<CollisionRecord> mergeQueue = new ArrayDeque<>();
     private final PriorityQueue<CollisionRecord> mergeQueue = new PriorityQueue<>();
     private final Runnable onGameOver;
 
@@ -58,25 +67,26 @@ public class GameLogic {
         score = 0;
         this.onGameOver = onGameOver;
         initializeNewBlockToPosition();
-        System.out.println("World width: " + this.width + "   height: " + this.height);
-        System.out.println("Gravity: " + world.getGravity());
         createBlockContainer();
 
-        CollisionListener<Body, BodyFixture>  collisionListener = new CollisionListener<>() {
+        CollisionListener<Body, BodyFixture> collisionListener = new CollisionListener<>() {
             @Override
             public boolean collision(BroadphaseCollisionData<Body, BodyFixture> collision) {
                 return true;
             }
+
             @Override
             public boolean collision(NarrowphaseCollisionData<Body, BodyFixture> collision) {
                 return true;
             }
+
             @Override
             public boolean collision(ManifoldCollisionData<Body, BodyFixture> collision) {
                 Body body1 = collision.getBody1();
                 Body body2 = collision.getBody2();
                 if (body1 instanceof BlockBody block1 && body2 instanceof BlockBody block2
-                    && block1.getValue() == block2.getValue() && block1.getValue() < MAX_BLOCK_VALUE) {
+                        && block1.getValue() == block2.getValue()
+                        && block1.getValue() < MAX_BLOCK_VALUE) {
                     double contactX = 0;
                     double contactY = 0;
                     for (ManifoldPoint p : collision.getManifold().getPoints()) {
@@ -89,9 +99,7 @@ public class GameLogic {
                     var collisionInfo = new CollisionRecord(
                             block1, block2, new Vector2(contactX, contactY)
                     );
-                    System.out.println("collisionInfo: " + block1.getID() + " " + block2.getID() + " at:" + frameNumber);
                     mergeQueue.add(collisionInfo);
-//                    return false;
                 }
                 return true;
             }
@@ -100,9 +108,7 @@ public class GameLogic {
         world.addCollisionListener(collisionListener);
     }
 
-    private long frameNumber = 0;
     public void update(double elapsedTime) {
-        frameNumber++;
         world.update(elapsedTime);
         if (!mergeQueue.isEmpty()) {
             mergeQueuedCollisions();
@@ -143,14 +149,21 @@ public class GameLogic {
 
     private BlockBody generateBlock() {
         return new BlockBody(generateBlockValue());
-//        return new BlockBody(2);
     }
 
     private final Random random = new Random();
+
     private int generateBlockValue() {
 //        int exp = random.nextInt(integerLog2(highestBlockValue)) + 1;
 //        return (1 << exp);
         return random.nextInt(10) < 7 ? 2 : 4;
+    }
+
+    private int integerLog2(int value) {
+        if (value <= 0) {
+            return -1;
+        }
+        return 31 - Integer.numberOfLeadingZeros(value);
     }
 
     private void initializeNewBlockToPosition() {
@@ -162,16 +175,17 @@ public class GameLogic {
 
     // MOUSE CONTROL
     private double dragOffsetX;
+
     public void handleMouseB1Pressed(double posX, double posY) {
         if (blockToPosition == null) return;
         double worldX = posX * width;
         double worldY = posY * height;
         if (blockToPosition.contains(new Vector2(worldX, worldY))) {
-            System.out.println("===========HIT=============: " + worldX + ", " + worldY);
             beingDragged = true;
             dragOffsetX = worldX - blockToPosition.getTransform().getTranslationX();
         }
     }
+
     public void handleMouseB1Released() {
         if (beingDragged) {
             releasePositionedBlock();
@@ -179,6 +193,7 @@ public class GameLogic {
         }
 
     }
+
     public void handleMouseB1Dragged(double posX) {
         if (beingDragged) {
             double worldX = posX * width - dragOffsetX;
@@ -193,10 +208,11 @@ public class GameLogic {
             double blockX = blockToPosition.getTransform().getTranslationX();
             double movementDistance = width / 100;
             double movedX = blockX + (right ? movementDistance : -movementDistance);
-            double y =  blockToPosition.getTransform().getTranslationY();
+            double y = blockToPosition.getTransform().getTranslationY();
             blockToPosition.getTransform().setTranslation(getWallConstrainedX(movedX), y);
         }
     }
+
     public void keyboardReleaseBlock() {
         if (!beingDragged && blockToPosition != null) {
             releasePositionedBlock();
@@ -205,13 +221,12 @@ public class GameLogic {
 
     private double getWallConstrainedX(double worldX) {
         double wallOffset = GameHandler.WALL_THICKNESS * width + blockSize / 2;
-        return Math.min(width - wallOffset , Math.max(wallOffset, worldX));
+        return Math.min(width - wallOffset, Math.max(wallOffset, worldX));
     }
 
 
     private void releasePositionedBlock() {
         if (gameOver()) {
-            System.out.println("GAME OVER");
             onGameOver.run();
         } else {
             world.addBody(blockToPosition);
@@ -226,7 +241,6 @@ public class GameLogic {
                 .filter(body -> body instanceof BlockBody)
                 .anyMatch(block -> block.createAABB().getMaxY() >= lineY);
     }
-
 
 
     //  BLOCK MERGING
@@ -248,14 +262,13 @@ public class GameLogic {
         Set<BlockBody> mergedBlocks = new HashSet<>();
         while (!mergeQueue.isEmpty()) {
             CollisionRecord collision = mergeQueue.poll();
-            if (mergedBlocks.contains(collision.blockA()) || mergedBlocks.contains(collision.blockB())) {
+            if (mergedBlocks.contains(collision.blockA())
+                    || mergedBlocks.contains(collision.blockB())) {
                 continue;
             }
             BlockBody mergedBlock = mergeCollidingBlocks(collision);
             mergedBlocks.add(collision.blockA());
             mergedBlocks.add(collision.blockB());
-            System.out.println("Collision A=" + collision.blockA().getValue() + " B= " + collision.blockB().getValue()
-            + " Created: " + mergedBlock.getValue());
             world.removeBody(collision.blockA());
             world.removeBody(collision.blockB());
             world.addBody(mergedBlock);
@@ -272,11 +285,12 @@ public class GameLogic {
      * Merges colliding blocks and creates a new block with value equal to sum of block values
      * and velocity equal to the average velocities of the blocks.
      * The new block is positioned to the collision contact point.
+     *
      * @param collision the collision information
      * @return block created by merging
      */
     private BlockBody mergeCollidingBlocks(CollisionRecord collision) {
-        BlockBody followedBlock = getHigherVelocityBlock(collision.blockA(),  collision.blockB());
+        BlockBody followedBlock = getHigherVelocityBlock(collision.blockA(), collision.blockB());
         BlockBody absorbedBlock = (followedBlock == collision.blockA()) ? collision.blockB() : collision.blockA();
 
         int newValue = followedBlock.getValue() + absorbedBlock.getValue();
@@ -300,32 +314,36 @@ public class GameLogic {
         private static int blockCount = 0;
         private final int IDNumber = blockCount++;
         private final int value;
+
         private BlockBody(int value) {
-            super();
             this.value = value;
-            // config
-            // TODO pull out into constants
-            addFixture(Geometry.createSquare(blockSize), 1.0, 0.8, 0.3);
+            addFixture(Geometry.createSquare(blockSize), DENSITY, FRICTION, RESTITUTION);
+            setAngularDamping(ANGULAR_DAMPING);
+            setLinearDamping(LINEAR_DAMPING);
             setMass(MassType.NORMAL);
-            setAngularDamping(2);
-//            setLinearDamping(1);
         }
+
         private double getPosX() {
             return getTransform().getTranslationX() / width;
         }
+
         private double getPosY() {
             return getTransform().getTranslationY() / height;
         }
+
         private int getID() {
             return IDNumber;
         }
+
         private int getValue() {
             return value;
         }
+
         @Override
         public int hashCode() {
             return Objects.hash(IDNumber, value);
         }
+
         @Override
         public boolean equals(Object o) {
             if (o == null || getClass() != o.getClass()) return false;
@@ -372,7 +390,6 @@ public class GameLogic {
     }
 
     public void loadGameState(GameState gameState) {
-        System.out.println("Loading game state...\n" + gameState);
         clearWorldBlocks();
         gameState.releasedBlocks().forEach(
                 block -> world.addBody(createBlockFromState(block))

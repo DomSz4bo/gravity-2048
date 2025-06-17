@@ -1,10 +1,8 @@
 package szabo.game;
 
 import javafx.animation.AnimationTimer;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
@@ -16,7 +14,6 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 
-// TODO create class for the constants
 
 public class GameHandler {
     public static final double PLAYGROUND_RATIO = 0.7;      // width : height

@@ -14,7 +14,6 @@ public class GameApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
         manager = new AppManager();
         Scene scene = new Scene(manager, 1000, 800);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm());
