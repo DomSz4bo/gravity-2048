@@ -251,7 +251,7 @@ public class GameLogic {
             if (mergedBlocks.contains(collision.blockA()) || mergedBlocks.contains(collision.blockB())) {
                 continue;
             }
-            BlockBody mergedBlock = mergeCollidingBlocks2(collision);
+            BlockBody mergedBlock = mergeCollidingBlocks(collision);
             mergedBlocks.add(collision.blockA());
             mergedBlocks.add(collision.blockB());
             System.out.println("Collision A=" + collision.blockA().getValue() + " B= " + collision.blockB().getValue()
@@ -276,24 +276,6 @@ public class GameLogic {
      * @return block created by merging
      */
     private BlockBody mergeCollidingBlocks(CollisionRecord collision) {
-        BlockBody blockA = collision.blockA();
-        BlockBody blockB = collision.blockB();
-
-        int newValue = blockA.getValue() + blockB.getValue();
-        Vector2 linearVel = new Vector2();
-        linearVel.add(blockA.getLinearVelocity()).add(blockB.getLinearVelocity()).divide(2);
-        double angularVel = (blockA.getAngularVelocity() + blockB.getAngularVelocity()) / 2;
-
-        BlockBody mergedBlock = new BlockBody(newValue);
-        mergedBlock.setLinearVelocity(linearVel);
-        mergedBlock.setAngularVelocity(angularVel);
-        mergedBlock.translate(collision.contactPoint());
-
-        highestBlockValue = Math.max(highestBlockValue, newValue);
-        return mergedBlock;
-    }
-
-    private BlockBody mergeCollidingBlocks2(CollisionRecord collision) {
         BlockBody followedBlock = getHigherVelocityBlock(collision.blockA(),  collision.blockB());
         BlockBody absorbedBlock = (followedBlock == collision.blockA()) ? collision.blockB() : collision.blockA();
 
@@ -392,13 +374,15 @@ public class GameLogic {
     public void loadGameState(GameState gameState) {
         System.out.println("Loading game state...\n" + gameState);
         clearWorldBlocks();
-        gameState.getBlocks().forEach(block -> world.addBody(createBlockFromState(block)));
-        if (gameState.getActiveBlock() == null) {
+        gameState.releasedBlocks().forEach(
+                block -> world.addBody(createBlockFromState(block))
+        );
+        if (gameState.activeBlock() == null) {
             releaseTime = System.currentTimeMillis();
         } else {
-            blockToPosition = createBlockFromState(gameState.getActiveBlock());
+            blockToPosition = createBlockFromState(gameState.activeBlock());
         }
-        score = gameState.getScore();
+        score = gameState.score();
     }
 
     public void resetLogic() {

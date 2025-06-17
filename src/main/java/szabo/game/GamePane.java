@@ -36,11 +36,11 @@ public class GamePane extends BorderPane {
     }
 
     public void paint(GameState gameState, Leaderboard leaderboard) {
-        Optional<Integer> scoreToBeat = findScoreToBeat(gameState.getScore(), leaderboard);
+        Optional<Integer> scoreToBeat = findScoreToBeat(gameState.score(), leaderboard);
         String scoreToBeatText = scoreToBeat.map(i -> "Score to beat: " + i)
                                             .orElse("New High Score!");
         scoreToBeatLabel.setText(scoreToBeatText);
-        scoreLabel.setText("Score: " + gameState.getScore());
+        scoreLabel.setText("Score: " + gameState.score());
         playground.paintBlocks(gameState.getAllBlocks());
     }
 

@@ -131,7 +131,7 @@ public class GameHandler {
 
     private void gameOver() {
         animationTimer.stop();
-        int finalScore = gameState.getScore();
+        int finalScore = gameState.score();
         showMessageBasedOnScore(finalScore);
         gameState = null;
         removeGameSaveFile();
