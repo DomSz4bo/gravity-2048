@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 import java.util.Objects;
 
 public class GameApp extends Application {
+    public static final int MIN_WIDTH = 400;
+    public static final int MIN_HEIGHT = 400;
     private AppManager manager;
 
     @Override
@@ -18,8 +20,8 @@ public class GameApp extends Application {
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm());
 
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(400);
-        primaryStage.setMinHeight(500);
+        primaryStage.setMinWidth(MIN_WIDTH);
+        primaryStage.setMinHeight(MIN_HEIGHT);
         primaryStage.setTitle("2048");
         primaryStage.getIcons().add(new Image("file:images/icon2048.png"));
         primaryStage.show();

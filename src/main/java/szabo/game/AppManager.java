@@ -1,5 +1,6 @@
 package szabo.game;
 
+import javafx.beans.binding.Bindings;
 import javafx.scene.layout.StackPane;
 
 public class AppManager extends StackPane {
@@ -13,6 +14,10 @@ public class AppManager extends StackPane {
 
     public AppManager() {
         super();
+
+        menuPane.maxWidthProperty().bind(Bindings.createDoubleBinding(
+                () -> Math.max(getWidth() / 2, GameApp.MIN_WIDTH * 0.8), widthProperty()
+        ));
         leaderboardPane.maxWidthProperty().bind(widthProperty().multiply(0.6));
         leaderboardPane.maxHeightProperty().bind(heightProperty().multiply(0.8));
         leaderboardPane.updateWith(leaderboard);

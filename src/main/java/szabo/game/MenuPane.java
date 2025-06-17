@@ -41,8 +41,6 @@ public class MenuPane extends VBox {
         setAlignment(Pos.CENTER);
         getChildren().addAll(titleImage, buttonContainer);
         spacingProperty().bind(minDimension.divide(20));
-        // TODO maybe move out of this class
-        maxWidthProperty().bind(appManager.widthProperty().divide(2));
 
         Image img = new Image("file:images/icon2048.png");
         titleImage.setImage(img);
@@ -50,11 +48,11 @@ public class MenuPane extends VBox {
         titleImage.fitWidthProperty().bind(minDimension.divide(3));
 
         buttonContainer.setAlignment(Pos.CENTER);
-        buttonContainer.spacingProperty().bind(minDimension.divide(50));
+        buttonContainer.spacingProperty().bind(minDimension.divide(40));
         for (Button btn : buttons) {
             btn.setOnMouseEntered(event -> btn.requestFocus());
             btn.styleProperty().bind(Bindings.createStringBinding(
-                    () -> String.format("-fx-font-size: %.2fpx;", Math.max(minDimension.get() / 35, 14)),
+                    () -> String.format("-fx-font-size: %.2fpx;", Math.max(minDimension.get() / 30, 20)),
                     minDimension
             ));
             btn.paddingProperty().bind(Bindings.createObjectBinding(

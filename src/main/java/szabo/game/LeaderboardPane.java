@@ -19,8 +19,7 @@ public class LeaderboardPane extends BorderPane {
 
     public LeaderboardPane(Runnable onClose) {
         Label title =  new Label("Leaderboard");
-        // TODO remove leaderboard style class
-        title.getStyleClass().addAll("leaderboard", "leaderboard-title");
+        title.getStyleClass().add("leaderboard-title");
         VBox titleVBox = new VBox(title);
         setTop(titleVBox);
         titleVBox.setAlignment(Pos.CENTER);
@@ -97,7 +96,6 @@ public class LeaderboardPane extends BorderPane {
             var scoreLabel = new Label(String.valueOf(entry.score()));
             getChildren().addAll(rankLabel, nameLabel, scoreLabel);
 
-            addStyleClassToChildren("leaderboard");
             switch (rank) {
                 case 1 -> addStyleClassToChildren("rank_1");
                 case 2 -> addStyleClassToChildren("rank_2");
