@@ -42,10 +42,10 @@ public class MenuPane extends VBox {
         getChildren().addAll(titleImage, buttonContainer);
         spacingProperty().bind(minDimension.divide(20));
 
-        Image img = new Image("file:images/icon2048.png");
+        Image img = new Image("file:images/logo.png");
         titleImage.setImage(img);
         titleImage.setPreserveRatio(true);
-        titleImage.fitWidthProperty().bind(minDimension.divide(3));
+        titleImage.fitWidthProperty().bind(minDimension.divide(2));
 
         buttonContainer.setAlignment(Pos.CENTER);
         buttonContainer.spacingProperty().bind(minDimension.divide(40));
