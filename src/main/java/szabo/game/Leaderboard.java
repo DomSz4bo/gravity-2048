@@ -8,14 +8,18 @@ import java.util.Objects;
 
 
 public class Leaderboard {
-    private static final String FILE_PATH = "leaderboard.dat";
-    private static final int SCORE_LIMIT = 10;
-
     private final List<ScoreEntry> entries = new ArrayList<>();
+    private final int scoreLimit;
     private Runnable onChange = null;
 
-    public Leaderboard() {
-        loadEntries();
+    public Leaderboard(String filepath, int limit) {
+        if (limit <= 0) {
+            throw new IllegalArgumentException("limit must be greater than 0");
+        }
+        scoreLimit = limit;
+        if (filepath != null) {
+            loadEntries(filepath);
+        }
     }
 
     public List<ScoreEntry> getScores() {
@@ -27,7 +31,7 @@ public class Leaderboard {
     }
 
     public boolean isNewLeaderboardScore(int score) {
-        if (entries.isEmpty() || entries.size() < SCORE_LIMIT)
+        if (entries.isEmpty() || entries.size() < scoreLimit)
             return true;
         return entries.getLast().score < score;
     }
@@ -46,16 +50,16 @@ public class Leaderboard {
     }
 
     private void insertEntry(ScoreEntry entry) {
-        if (entries.size() == SCORE_LIMIT) {
+        if (entries.size() == scoreLimit) {
             entries.removeLast();
         }
         entries.add(entry);
         entries.sort(Comparator.comparingInt(ScoreEntry::score).reversed());
     }
 
-    private void loadEntries() {
+    private void loadEntries(String filepath) {
         entries.clear();
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 int sep = line.indexOf('#');
@@ -64,20 +68,19 @@ public class Leaderboard {
                 entries.add(new ScoreEntry(name, score));
             }
             entries.sort(Comparator.comparingInt(ScoreEntry::score).reversed());
-            if (entries.size() > SCORE_LIMIT) {
-                entries.subList(SCORE_LIMIT, entries.size()).clear();
+            if (entries.size() > scoreLimit) {
+                entries.subList(scoreLimit, entries.size()).clear();
             }
         } catch (IOException e) {
             System.err.println("Failed to load Leaderboard: " + e.getMessage());
         }
-        System.out.println("Loaded " + entries.size() + " entries");
-        if (entries.size() > SCORE_LIMIT) {
-            throw new IllegalStateException("Too many entries");
+        if (entries.size() > scoreLimit) {
+            entries.subList(scoreLimit, entries.size()).clear();
         }
     }
 
-    public void save() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH))) {
+    public void save(String filepath) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filepath))) {
             for (ScoreEntry entry : entries) {
                 bw.write(entry.score() + "#" + entry.name());
                 bw.newLine();
@@ -87,7 +90,7 @@ public class Leaderboard {
         }
     }
 
-    record ScoreEntry(String name, int score) {
+    public record ScoreEntry(String name, int score) {
         private static final int MAX_USERNAME_LENGTH = 15;
 
         public ScoreEntry {

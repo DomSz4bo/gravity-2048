@@ -10,22 +10,23 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+
 
 public class LeaderboardPane extends BorderPane {
     private final VBox scoreList = new VBox();
     private final DoubleBinding minDimension;
 
-    public LeaderboardPane() {
+    public LeaderboardPane(Runnable onClose) {
         Label title =  new Label("Leaderboard");
+        // TODO remove leaderboard style class
+        title.getStyleClass().addAll("leaderboard", "leaderboard-title");
         VBox titleVBox = new VBox(title);
         setTop(titleVBox);
         titleVBox.setAlignment(Pos.CENTER);
-//        titleVBox.setBackground(Background.fill(Color.web("#FFC680")));
 
         Button closeButton = new Button("Close");
-        closeButton.setOnAction(e -> setVisible(false));
+        closeButton.setOnAction(e -> onClose.run());
         var btnPane = new HBox(closeButton);
         btnPane.setAlignment(Pos.CENTER);
         setBottom(btnPane);
@@ -39,24 +40,18 @@ public class LeaderboardPane extends BorderPane {
                 },
                 widthProperty()
         ));
-//        scoreList.getStyleClass().add("score-list");
         ScrollPane scrollPane = new ScrollPane(scoreList);
         scrollPane.setFitToWidth(true);
         setCenter(scrollPane);
-
-        setBackground(Background.fill(Color.web("rgba(0, 0, 0, 0.9)")));
+        getStyleClass().add("leaderboard-pane");
 
         minDimension = Bindings.createDoubleBinding(
                 () -> Math.min(getWidth(), getHeight()),
                 widthProperty(), heightProperty()
         );
 
-
         title.prefHeightProperty().bind(heightProperty().multiply(0.15));
-//        title.setBackground(Background.fill(Color.LIGHTGRAY));
-
         btnPane.prefHeightProperty().bind(heightProperty().multiply(0.1));
-//        btnPane.setBackground(Background.fill(Color.LIGHTGRAY));
         closeButton.paddingProperty().bind(Bindings.createObjectBinding(
                 () -> {
                     double verticalPadding = minDimension.get() / 20;
@@ -69,8 +64,7 @@ public class LeaderboardPane extends BorderPane {
 
         Platform.runLater(() -> {
             bindFontSizeToMinDimension(title, 20, 15);
-            // TODO rethink the amount of divFactor - realise what it is bound to
-            bindFontSizeToMinDimension(closeButton, 14, 30);
+            bindFontSizeToMinDimension(closeButton, 14, 25);
         });
     }
 
@@ -103,12 +97,18 @@ public class LeaderboardPane extends BorderPane {
             var scoreLabel = new Label(String.valueOf(entry.score()));
             getChildren().addAll(rankLabel, nameLabel, scoreLabel);
 
-            Platform.runLater(() -> {
-                bindFontSizeToMinDimension(rankLabel, 14, 30);
-                bindFontSizeToMinDimension(nameLabel, 14, 30);
-                bindFontSizeToMinDimension(scoreLabel, 14, 30);
-            });
+            addStyleClassToChildren("leaderboard");
+            switch (rank) {
+                case 1 -> addStyleClassToChildren("rank_1");
+                case 2 -> addStyleClassToChildren("rank_2");
+                case 3 -> addStyleClassToChildren("rank_3");
+            }
 
+            Platform.runLater(() -> {
+                bindFontSizeToMinDimension(rankLabel, 14, 25);
+                bindFontSizeToMinDimension(nameLabel, 14, 25);
+                bindFontSizeToMinDimension(scoreLabel, 14, 25);
+            });
 
             HBox.setHgrow(nameLabel, Priority.ALWAYS);
             nameLabel.setMaxWidth(Double.MAX_VALUE);
@@ -116,13 +116,6 @@ public class LeaderboardPane extends BorderPane {
             scoreLabel.setAlignment(Pos.CENTER_RIGHT);
             scoreLabel.setMinWidth(60);
 
-            addStyleClassToChildren("leaderboard");
-
-            switch (rank) {
-                case 1 -> addStyleClassToChildren("rank_1");
-                case 2 -> addStyleClassToChildren("rank_2");
-                case 3 -> addStyleClassToChildren("rank_3");
-            }
         }
 
         private void addStyleClassToChildren(String className) {

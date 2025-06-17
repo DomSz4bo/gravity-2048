@@ -18,15 +18,12 @@ public class GameApp extends Application {
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm());
 
         primaryStage.setScene(scene);
-
         primaryStage.setMinWidth(400);
         primaryStage.setMinHeight(500);
-
         primaryStage.setTitle("2048");
         primaryStage.getIcons().add(new Image("file:images/icon2048.png"));
         primaryStage.show();
     }
-
 
     public static void main(String[] args) {
         launch(args);
@@ -35,8 +32,7 @@ public class GameApp extends Application {
     @Override
     public void stop() throws Exception {
         super.stop();
-        System.out.println("Application stopped");
         manager.saveGame();
-        manager.getLeaderboard().save();
+        manager.saveLeaderboard();
     }
 }

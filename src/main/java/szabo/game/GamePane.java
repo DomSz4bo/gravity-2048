@@ -1,47 +1,34 @@
 package szabo.game;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 
-import java.util.Random;
+import java.util.Optional;
 
 public class GamePane extends BorderPane {
 
-    private static final String SCORE = "Score: ";
-    private static final String HIGH_SCORE = "High Score: ";
-
     private final Label scoreLabel = new Label();
-    private final Label highScoreLabel = new Label();
+    private final Label scoreToBeatLabel = new Label();
     private final Playground playground = new Playground();
 
     public GamePane(Runnable onExit) {
         super();
-//        setPadding(new Insets(0, 5, 0, 5));
-
         scoreLabel.setStyle("-fx-font-size: 25");
-//        scoreLabel.setBackground(Background.fill(Color.BLUEVIOLET));
         scoreLabel.setMaxWidth(Double.MAX_VALUE);
         scoreLabel.setAlignment(Pos.CENTER);
         HBox.setHgrow(scoreLabel, Priority.ALWAYS);
 
-        highScoreLabel.setStyle("-fx-font-size: 25");
-//        highScoreLabel.setBackground(Background.fill(Color.RED));
+        scoreToBeatLabel.setStyle("-fx-font-size: 25");
 
         var exitButton = new Button("Back to Menu");
         exitButton.setStyle("-fx-font-size: 25");
         exitButton.setOnAction(event -> onExit.run());
 
-        var scorePane = new HBox(highScoreLabel, scoreLabel, exitButton);
-//        scorePane.setBackground(Background.fill(Color.ORANGE));
+        var scorePane = new HBox(scoreToBeatLabel, scoreLabel, exitButton);
         scorePane.setAlignment(Pos.CENTER);
         scorePane.prefHeightProperty().bind(heightProperty().divide(16));
-
-        // ------------------------------------------------
 
         setCenter(playground);
         setTop(scorePane);
@@ -49,9 +36,18 @@ public class GamePane extends BorderPane {
     }
 
     public void paint(GameState gameState, Leaderboard leaderboard) {
-        scoreLabel.setText(SCORE + gameState.getScore());
-        highScoreLabel.setText(HIGH_SCORE + leaderboard.getHighScore());
+        Optional<Integer> scoreToBeat = findScoreToBeat(gameState.getScore(), leaderboard);
+        String scoreToBeatText = scoreToBeat.map(i -> "Score to beat: " + i)
+                                            .orElse("New High Score!");
+        scoreToBeatLabel.setText(scoreToBeatText);
+        scoreLabel.setText("Score: " + gameState.getScore());
         playground.paintBlocks(gameState.getAllBlocks());
+    }
+
+    private Optional<Integer> findScoreToBeat(int currentScore, Leaderboard leaderboard) {
+        return leaderboard.getScores().reversed().stream()
+                .filter(entry -> currentScore <= entry.score())
+                .findFirst().map(Leaderboard.ScoreEntry::score);
     }
 
     public Playground getPlayground() {

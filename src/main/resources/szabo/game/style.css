@@ -1,14 +1,6 @@
-.scroll-pane .viewport {
-    -fx-background-color: transparent;
+.mainWindow {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%, #0D2857, #070F33);
 }
-
-.scroll-pane {
-    -fx-background-color: transparent;
-}
-
-/*.score-list {*/
-/*    -fx-text-fill: white;*/
-/*}*/
 
 .button {
     -fx-text-fill: #0c2552;
@@ -23,19 +15,46 @@
     /*-fx-border-width: 2;*/
 }
 
-.button:hover {
+.button:focused {
     -fx-background-color: rgb(255, 255, 255);
     -fx-text-fill: black;
+    -fx-effect: dropshadow(three-pass-box, rgb(255, 145, 0), 8, 0.7, 0, 0);
 }
 
-.button:focused {
-    /*-fx-effect: dropshadow(three-pass-box, rgb(255, 255, 255), 5, 0.3, 0, 0);*/
-    -fx-effect: dropshadow(three-pass-box, rgb(255, 145, 0), 5, 0.3, 0, 0);
+
+/* LEADERBOARD */
+.scroll-pane .viewport, .scroll-pane, .scroll-bar:vertical,
+.scroll-bar:vertical .decrement-button, .scroll-bar:vertical .increment-button {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(255, 255, 255, 0.5);
+    -fx-background-radius: 4px;
+}
+.scroll-bar:vertical .decrement-arrow,
+.scroll-bar:vertical .increment-arrow {
+    -fx-background-color: rgba(255, 255, 255, 0.5);
+}
+
+.scroll-bar:vertical .thumb:hover,
+.scroll-bar:vertical .decrement-arrow:hover,
+.scroll-bar:vertical .increment-arrow:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.8);
+}
+
+.leaderboard-pane {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
 }
 
 .label {
     -fx-text-fill: #ffffff;
     -fx-font-family: "Cascadia Mono";
+}
+
+.label.leaderboard-title {
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgb(0, 0, 0), 7, 0.7, 4, 4);
 }
 
 .label.rank_1 {
@@ -49,3 +68,7 @@
 .label.rank_3 {
     -fx-text-fill: #CD7F32;
 }
+
+
+
+

@@ -5,14 +5,12 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -38,7 +36,7 @@ public class GameHandler {
         super();
         manager = appManager;
         gamePane = new GamePane(this::returnToMenu);
-        gameLogic = new GameLogic(() -> gameOver());
+        gameLogic = new GameLogic(this::gameOver);
         existingGameProperty = new SimpleBooleanProperty();
         updateExistingGameProperty();
 

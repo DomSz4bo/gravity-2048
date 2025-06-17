@@ -8,9 +8,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +52,7 @@ public class MenuPane extends VBox {
         buttonContainer.setAlignment(Pos.CENTER);
         buttonContainer.spacingProperty().bind(minDimension.divide(50));
         for (Button btn : buttons) {
+            btn.setOnMouseEntered(event -> btn.requestFocus());
             btn.styleProperty().bind(Bindings.createStringBinding(
                     () -> String.format("-fx-font-size: %.2fpx;", Math.max(minDimension.get() / 35, 14)),
                     minDimension
@@ -78,6 +77,14 @@ public class MenuPane extends VBox {
         } else {
             buttonContainer.getChildren().addAll(buttons.subList(1, buttons.size()));
         }
+    }
+
+    public void disableButtons() {
+        buttons.forEach(btn -> btn.setDisable(true));
+    }
+
+    public void enableButtons() {
+        buttons.forEach(btn -> btn.setDisable(false));
     }
 
 }
