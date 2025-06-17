@@ -9,7 +9,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 
@@ -18,7 +21,7 @@ public class LeaderboardPane extends BorderPane {
     private final DoubleBinding minDimension;
 
     public LeaderboardPane(Runnable onClose) {
-        Label title =  new Label("Leaderboard");
+        Label title = new Label("Leaderboard");
         title.getStyleClass().add("leaderboard-title");
         VBox titleVBox = new VBox(title);
         setTop(titleVBox);
@@ -80,10 +83,12 @@ public class LeaderboardPane extends BorderPane {
         if (minimum <= 0) {
             throw new IllegalArgumentException("minimum must be greater than 0");
         }
-        var currentFont = element.getFont();
+        var currentFontFamily = element.getFont().getFamily();
         element.fontProperty().bind(Bindings.createObjectBinding(
-                () -> Font.font(currentFont.getFamily(), Math.max(minimum, minDimension.get() / divFactor)),
-                minDimension
+                () -> Font.font(
+                        currentFontFamily,
+                        Math.max(minimum, minDimension.get() / divFactor)
+                ), minDimension
         ));
     }
 

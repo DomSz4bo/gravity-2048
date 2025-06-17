@@ -124,7 +124,6 @@ public class GameLogic {
                 initializeNewBlockToPosition();
             }
         }
-//        printBlocks();
     }
 
     private void createBlockContainer() {
@@ -132,7 +131,7 @@ public class GameLogic {
         double horizontalWallThickness = GameHandler.WALL_THICKNESS * height;
 
         Body leftWall = new Body();
-        leftWall.addFixture(Geometry.createRectangle(verticalWallThickness, height));  // experiment with friction, density etc.
+        leftWall.addFixture(Geometry.createRectangle(verticalWallThickness, height));
         leftWall.setMassType(MassType.INFINITE);
         leftWall.translate(verticalWallThickness, height / 2);
 

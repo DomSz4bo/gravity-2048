@@ -52,8 +52,10 @@ public class MenuPane extends VBox {
         for (Button btn : buttons) {
             btn.setOnMouseEntered(event -> btn.requestFocus());
             btn.styleProperty().bind(Bindings.createStringBinding(
-                    () -> String.format("-fx-font-size: %.2fpx;", Math.max(minDimension.get() / 30, 20)),
-                    minDimension
+                    () -> String.format(
+                            "-fx-font-size: %.2fpx;",
+                            Math.max(minDimension.get() / 30, 20)
+                    ), minDimension
             ));
             btn.paddingProperty().bind(Bindings.createObjectBinding(
                     () -> {
@@ -61,8 +63,7 @@ public class MenuPane extends VBox {
                         double horizontalPadding = minDimension.get() / 100;
                         return new Insets(horizontalPadding, verticalPadding,
                                 horizontalPadding, verticalPadding);
-                    },
-                    minDimension
+                    }, minDimension
             ));
             btn.prefWidthProperty().bind(widthProperty().multiply(0.8));
         }
