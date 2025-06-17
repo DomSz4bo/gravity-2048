@@ -12,6 +12,7 @@ public class Leaderboard {
     private static final int SCORE_LIMIT = 10;
 
     private final List<ScoreEntry> entries = new ArrayList<>();
+    private Runnable onChange = null;
 
     public Leaderboard() {
         loadEntries();
@@ -34,8 +35,14 @@ public class Leaderboard {
     public void addEntry(String username, int score) {
         if (!isNewLeaderboardScore(score))
             throw new IllegalArgumentException("Score is too low");
-        ScoreEntry newEntry = new ScoreEntry(username, score);
+        ScoreEntry newEntry = new ScoreEntry(username.trim(), score);
         insertEntry(newEntry);
+        if (onChange != null)
+            onChange.run();
+    }
+
+    public void setOnChange(Runnable onChange) {
+        this.onChange = onChange;
     }
 
     private void insertEntry(ScoreEntry entry) {
@@ -80,16 +87,13 @@ public class Leaderboard {
         }
     }
 
-    public record ScoreEntry(String name, int score) {
+    record ScoreEntry(String name, int score) {
         private static final int MAX_USERNAME_LENGTH = 15;
 
         public ScoreEntry {
             Objects.requireNonNull(name);
             if (name.length() > MAX_USERNAME_LENGTH) {
                 throw new IllegalArgumentException("Username is too long, max length is " + MAX_USERNAME_LENGTH);
-            }
-            if (name.indexOf('#') != -1) {
-                throw new IllegalArgumentException("Invalid name: Cannot contain '#'.");
             }
         }
     }

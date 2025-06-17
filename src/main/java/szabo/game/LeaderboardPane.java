@@ -14,13 +14,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class LeaderboardPane extends BorderPane {
-    private final AppManager appManager;
     private final VBox scoreList = new VBox();
     private final DoubleBinding minDimension;
 
-    public LeaderboardPane(AppManager appManager) {
-        this.appManager = appManager;
-
+    public LeaderboardPane() {
         Label title =  new Label("Leaderboard");
         VBox titleVBox = new VBox(title);
         setTop(titleVBox);
@@ -75,14 +72,11 @@ public class LeaderboardPane extends BorderPane {
             // TODO rethink the amount of divFactor - realise what it is bound to
             bindFontSizeToMinDimension(closeButton, 14, 30);
         });
-
-
-        loadLeaderboard();
     }
 
-    private void loadLeaderboard() {
-        var entries = appManager.getLeaderboard().getScores();
-
+    public void updateWith(Leaderboard leaderboard) {
+        scoreList.getChildren().clear();
+        var entries = leaderboard.getScores();
         for (int i = 0; i < entries.size(); i++) {
             Leaderboard.ScoreEntry entry = entries.get(i);
             scoreList.getChildren().add(new LeaderboardPaneEntry(entry, i + 1));
@@ -93,7 +87,6 @@ public class LeaderboardPane extends BorderPane {
         if (minimum <= 0) {
             throw new IllegalArgumentException("minimum must be greater than 0");
         }
-//        System.out.println(element.getFont().getFamily());
         var currentFont = element.getFont();
         element.fontProperty().bind(Bindings.createObjectBinding(
                 () -> Font.font(currentFont.getFamily(), Math.max(minimum, minDimension.get() / divFactor)),

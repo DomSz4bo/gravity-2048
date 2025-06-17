@@ -13,9 +13,12 @@ public class AppManager extends StackPane {
         super();
         menuPane = new MenuPane(this);
         gameHandler = new GameHandler(this);
-        leaderboardPane = new LeaderboardPane(this);
+        leaderboardPane = new LeaderboardPane();
         leaderboardPane.maxWidthProperty().bind(widthProperty().multiply(0.6));
         leaderboardPane.maxHeightProperty().bind(heightProperty().multiply(0.8));
+        leaderboardPane.updateWith(leaderboard);
+
+        leaderboard.setOnChange(() -> leaderboardPane.updateWith(leaderboard));
 
         getChildren().addAll(gameHandler.getGamePane(), menuPane,  leaderboardPane);
         showMenu();

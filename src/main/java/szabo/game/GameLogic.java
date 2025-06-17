@@ -16,14 +16,13 @@ import java.util.*;
 
 
 public class GameLogic {
-    private static final double PHYSICS_HEIGHT = 3;         // height in meters - affects physics scale
-    private static final long NEW_BLOCK_DELAY = 500;          // ms delay of next block generation
-    private static final double BLOCK_START_HEIGHT = 0.9 * PHYSICS_HEIGHT;
+    private static final double PHYSICS_SCALE = 3;            // height in meters - affects physics scale
+    private static final long NEW_BLOCK_DELAY = 750;          // ms delay of next block generation
     private static final int MAX_BLOCK_VALUE = 131072;
 
     private final World<Body> world;
-    private final double width = GameHandler.PLAYGROUND_RATIO * PHYSICS_HEIGHT;
-    private final double height = PHYSICS_HEIGHT;
+    private final double width = GameHandler.PLAYGROUND_RATIO * PHYSICS_SCALE;
+    private final double height = PHYSICS_SCALE;
     private final double blockSize = GameHandler.BLOCK_SIZE * width;
 
     private int score;
@@ -156,7 +155,8 @@ public class GameLogic {
 
     private void initializeNewBlockToPosition() {
         blockToPosition = generateBlock();
-        blockToPosition.translate(width / 2, BLOCK_START_HEIGHT);
+        double blockY = height * (1 - GameHandler.LINE_POSITION / 2);
+        blockToPosition.translate(width / 2, blockY);
     }
 
 
@@ -182,10 +182,8 @@ public class GameLogic {
     public void handleMouseB1Dragged(double posX) {
         if (beingDragged) {
             double worldX = posX * width - dragOffsetX;
-            blockToPosition.getTransform().setTranslation(
-                    getWallConstrainedX(worldX),
-                    BLOCK_START_HEIGHT
-            );
+            double y = blockToPosition.getTransform().getTranslationY();
+            blockToPosition.getTransform().setTranslation(getWallConstrainedX(worldX), y);
         }
     }
 
@@ -195,10 +193,8 @@ public class GameLogic {
             double blockX = blockToPosition.getTransform().getTranslationX();
             double movementDistance = width / 100;
             double movedX = blockX + (right ? movementDistance : -movementDistance);
-            blockToPosition.getTransform().setTranslation(
-                    getWallConstrainedX(movedX),
-                    BLOCK_START_HEIGHT
-            );
+            double y =  blockToPosition.getTransform().getTranslationY();
+            blockToPosition.getTransform().setTranslation(getWallConstrainedX(movedX), y);
         }
     }
     public void keyboardReleaseBlock() {
@@ -236,7 +232,7 @@ public class GameLogic {
     //  BLOCK MERGING
     @FunctionalInterface
     public interface MergeListener {
-        void onMerged(int newValue, double posX, double posY);
+        void onMerged(int newBlockValue, double posX, double posY);
     }
 
     private final List<MergeListener> mergeListeners = new ArrayList<>();
@@ -318,19 +314,6 @@ public class GameLogic {
         return (velocityMagnitude1 > velocityMagnitude2) ? block1 : block2;
     }
 
-
-    private int integerLog2(int value) {
-        if (Integer.bitCount(value) != 1)
-            return -1;
-        int power = 0;
-        while ((value >>>= 1) != 0) {
-            power++;
-        }
-        return power;
-    }
-
-
-
     private class BlockBody extends Body {
         private static int blockCount = 0;
         private final int IDNumber = blockCount++;
@@ -368,22 +351,6 @@ public class GameLogic {
             return IDNumber == blockBody.IDNumber && value == blockBody.value;
         }
     }
-
-
-
-    // TODO remove - used only for debugging
-    private void printBlocks() {
-        for (Body b : world.getBodies()) {
-            if (b instanceof BlockBody) {
-                System.out.println("---\n");
-                System.out.println(b.getTransform().getTranslation());
-                System.out.println(b.getLinearVelocity());
-                System.out.println(b.getAngularDamping());
-                System.out.println("---\n");
-            }
-        }
-    }
-
 
     public GameState createGameState() {
         return new GameState(

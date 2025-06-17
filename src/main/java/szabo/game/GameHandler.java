@@ -21,8 +21,8 @@ import java.io.IOException;
 public class GameHandler {
     public static final double PLAYGROUND_RATIO = 0.7;      // width : height
     public static final double WALL_THICKNESS = 0.01;           // % of Playground
-    public static final double BLOCK_SIZE = 0.18;           // % of Playground Width
-    public static final double LINE_POSITION = 0.6;         // % of playground height
+    public static final double BLOCK_SIZE = 0.23;           // % of Playground Width
+    public static final double LINE_POSITION = 0.3;         // % of playground height
     private static final String GAME_SAVE = "saved_game.dat";
     private static final int NANOS_IN_SECOND = 1_000_000_000;
 
@@ -134,24 +134,43 @@ public class GameHandler {
     private void gameOver() {
         animationTimer.stop();
         int finalScore = gameState.getScore();
-        if (manager.getLeaderboard().isNewLeaderboardScore(finalScore)) {
-            String username = getUsername(finalScore);
-            manager.getLeaderboard().addEntry(username, finalScore);
-        } else {
-            showGameOverMessage(finalScore);
-        }
+        showMessageBasedOnScore(finalScore);
         gameState = null;
         removeGameSaveFile();
         returnToMenu();
     }
 
-    private String getUsername(int score) {
+    private void showMessageBasedOnScore(int score) {
+        if (manager.getLeaderboard().isNewLeaderboardScore(score)) {
+            boolean success = false;
+            String errorMessage = null;
+            while (!success) {
+                try {
+                    String username = getUsername(score, errorMessage);
+                    manager.getLeaderboard().addEntry(username, score);
+                    success = true;
+                } catch (IllegalArgumentException e) {
+                    errorMessage = e.getMessage();
+                }
+            }
+        } else {
+            showGameOverMessage(score);
+        }
+    }
+
+    private String getUsername(int score, String error) {
         var dialog = new TextInputDialog();
         dialog.setTitle("Leaderboard");
-        dialog.setHeaderText("Congratulations, you are on the leaderboard!\n" +
-                "You reached a score of " + score + ".");
+        String message = "Congratulations, you are on the leaderboard!\n" +
+                "You reached a score of " + score + ".";
+        if (error != null) {
+            message = message + "\n\n" + error;
+        }
+        dialog.setHeaderText(message);
         dialog.setContentText("Enter your name:");
         dialog.setGraphic(null);
+        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image("file:images/icon2048-blank.png"));
         var username = dialog.showAndWait();
         return username.orElse("Anonymous");
     }
@@ -160,15 +179,13 @@ public class GameHandler {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game Over");
         alert.setHeaderText("Your final score was " + score + ".");
-//        alert.setContentText("Click the \"Finish\" button to return to the menu.");
         Image img = new Image("file:images/game-over.png");
         ImageView imageView = new ImageView(img);
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(100);
         alert.setGraphic(imageView);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(
-                new Image("file:images/icon2048-blank.png"));
+        stage.getIcons().add(new Image("file:images/icon2048-blank.png"));
         alert.getButtonTypes().setAll(ButtonType.FINISH);
         alert.showAndWait();
     }
