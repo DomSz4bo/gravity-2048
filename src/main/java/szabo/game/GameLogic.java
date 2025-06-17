@@ -59,7 +59,6 @@ public class GameLogic {
         }
     }
 
-    //    private final Queue<CollisionRecord> mergeQueue = new ArrayDeque<>();
     private final PriorityQueue<CollisionRecord> mergeQueue = new PriorityQueue<>();
     private final Runnable onGameOver;
 
@@ -88,21 +87,25 @@ public class GameLogic {
                 if (body1 instanceof BlockBody block1 && body2 instanceof BlockBody block2
                         && block1.getValue() == block2.getValue()
                         && block1.getValue() < MAX_BLOCK_VALUE) {
-                    double contactX = 0;
-                    double contactY = 0;
-                    for (ManifoldPoint p : collision.getManifold().getPoints()) {
-                        contactX += p.getPoint().x;
-                        contactY += p.getPoint().y;
-                    }
-                    int numberOfPoints = collision.getManifold().getPoints().size();
-                    contactX /= numberOfPoints;
-                    contactY /= numberOfPoints;
+                    Vector2 contactPoint = averagePoint(collision.getManifold().getPoints());
                     var collisionInfo = new CollisionRecord(
-                            block1, block2, new Vector2(contactX, contactY)
+                            block1, block2, contactPoint
                     );
                     mergeQueue.add(collisionInfo);
                 }
                 return true;
+            }
+
+            private Vector2 averagePoint(List<ManifoldPoint> points) {
+                double averageX = 0;
+                double averageY = 0;
+                for (ManifoldPoint p : points) {
+                    averageX += p.getPoint().x;
+                    averageY += p.getPoint().y;
+                }
+                averageX /= points.size();
+                averageY /= points.size();
+                return new Vector2(averageX, averageY);
             }
 
         };
