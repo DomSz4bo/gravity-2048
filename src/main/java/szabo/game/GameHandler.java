@@ -41,10 +41,8 @@ public class GameHandler {
         setupKeyboardControl();
 
         gameLogic.setOnMerged(
-                (newValue, posX, posY) -> {
-                    System.out.println("Merging " + posX + " " + posY);
-                    gamePane.getPlayground().runEffect(newValue, posX, (1 - posY));
-                }
+                (newValue, posX, posY) ->
+                        gamePane.getPlayground().runEffect(newValue, posX, (1 - posY))
         );
 
         animationTimer = new AnimationTimer() {

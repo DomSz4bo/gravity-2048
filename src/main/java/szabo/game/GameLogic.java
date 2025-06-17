@@ -16,16 +16,17 @@ import java.util.*;
 
 
 public class GameLogic {
-    private static final double PHYSICS_SCALE = 3;            // height in meters - affects physics scale
     private static final long NEW_BLOCK_DELAY = 750;          // ms delay of next block generation
     private static final int MAX_BLOCK_VALUE = 131072;
+    private static final boolean CLASSIC_GENERATION = true;
 
     // BLOCK BEHAVIOUR
-    public static final double FRICTION = 0.8;
-    private static final double RESTITUTION = 0.3;
+    private static final double PHYSICS_SCALE = 3;            // height in meters
+    public static final double BLOCK_DENSITY = 1.0;
+    public static final double BLOCK_FRICTION = 0.8;
+    private static final double BLOCK_RESTITUTION = 0.3;
     private static final double ANGULAR_DAMPING = 2.0;
     private static final double LINEAR_DAMPING = 1.0;
-    public static final double DENSITY = 1.0;
 
     private final World<Body> world;
     private final double width = GameHandler.PLAYGROUND_RATIO * PHYSICS_SCALE;
@@ -33,8 +34,8 @@ public class GameLogic {
     private final double blockSize = GameHandler.BLOCK_SIZE * width;
 
     private int score;
-    private int highestBlockValue = 2;          // TODO not used - maybe remove
-    private BlockBody blockToPosition;          // TODO maybe RENAME
+    private int highestBlockValue = 2;
+    private BlockBody blockToPosition;
     private long releaseTime = System.currentTimeMillis();
     private boolean beingDragged = false;
 
@@ -154,9 +155,12 @@ public class GameLogic {
     private final Random random = new Random();
 
     private int generateBlockValue() {
-//        int exp = random.nextInt(integerLog2(highestBlockValue)) + 1;
-//        return (1 << exp);
-        return random.nextInt(10) < 7 ? 2 : 4;
+        if (CLASSIC_GENERATION) {
+            return random.nextInt(10) < 9 ? 2 : 4;
+        } else {
+            int exp = random.nextInt(integerLog2(highestBlockValue)) + 1;
+            return (1 << exp);
+        }
     }
 
     private int integerLog2(int value) {
@@ -317,7 +321,12 @@ public class GameLogic {
 
         private BlockBody(int value) {
             this.value = value;
-            addFixture(Geometry.createSquare(blockSize), DENSITY, FRICTION, RESTITUTION);
+            addFixture(
+                    Geometry.createSquare(blockSize),
+                    BLOCK_DENSITY,
+                    BLOCK_FRICTION,
+                    BLOCK_RESTITUTION
+            );
             setAngularDamping(ANGULAR_DAMPING);
             setLinearDamping(LINEAR_DAMPING);
             setMass(MassType.NORMAL);
@@ -400,12 +409,16 @@ public class GameLogic {
             blockToPosition = createBlockFromState(gameState.activeBlock());
         }
         score = gameState.score();
+        Optional<Integer> highestValue = gameState.releasedBlocks().stream()
+                .map(GameState.BlockState::value).max(Comparator.naturalOrder());
+        highestBlockValue = highestValue.orElse(2);
     }
 
     public void resetLogic() {
         clearWorldBlocks();
         blockToPosition = null;
         score = 0;
+        highestBlockValue = 2;
     }
 
 
