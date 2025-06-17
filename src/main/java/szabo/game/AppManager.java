@@ -13,8 +13,6 @@ public class AppManager extends StackPane {
     private final LeaderboardPane leaderboardPane = new LeaderboardPane(this::showMenu);
 
     public AppManager() {
-        super();
-
         menuPane.maxWidthProperty().bind(Bindings.createDoubleBinding(
                 () -> Math.max(getWidth() / 2, GameApp.MIN_WIDTH * 0.8), widthProperty()
         ));

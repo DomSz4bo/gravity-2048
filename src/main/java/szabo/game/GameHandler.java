@@ -2,6 +2,8 @@ package szabo.game;
 
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -28,15 +30,14 @@ public class GameHandler {
     private final GamePane gamePane;
     private final GameLogic gameLogic;
     private final AnimationTimer animationTimer;
-    private final BooleanProperty existingGameProperty;
+    private final ReadOnlyBooleanWrapper existingGameProperty;
     private GameState gameState = null;
 
     public GameHandler(AppManager appManager) {
-        super();
         manager = appManager;
         gamePane = new GamePane(this::returnToMenu);
         gameLogic = new GameLogic(this::gameOver);
-        existingGameProperty = new SimpleBooleanProperty();
+        existingGameProperty = new ReadOnlyBooleanWrapper();
         updateExistingGameProperty();
 
         setupMouseControl();
@@ -116,12 +117,10 @@ public class GameHandler {
             try {
                 gameState = GameState.load(GAME_SAVE);
                 gameLogic.loadGameState(gameState);
-                System.out.println("Loaded existing game");
             } catch (ClassNotFoundException | IOException e) {
                 System.err.println("Failed to load game: " + e.getMessage());
             }
         } else if (!useExisting) {
-            System.out.println("Started new game");
             gameState = null;
             gameLogic.resetLogic();
         }
@@ -197,11 +196,10 @@ public class GameHandler {
     public void saveGameState() {
         if (gameState != null) {
             gameState.save(GAME_SAVE);
-            System.out.println("Saved game:" + gameState);
         }
     }
-    public BooleanProperty existingGameProperty() {
-        return existingGameProperty;
+    public ReadOnlyBooleanProperty existingGameProperty() {
+        return existingGameProperty.getReadOnlyProperty();
     }
 
     private void updateExistingGameProperty() {
