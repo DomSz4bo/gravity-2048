@@ -19,12 +19,21 @@ public class BlockShape extends StackPane {
         if (Playground.getColor(value) == null) {
             throw new IllegalArgumentException("Value " + value + " is not a valid block value.");
         }
-        rectangle.setFill(Playground.getColor(value));
-        rectangle.setStroke(Color.BLACK);
-        text.setFill(Color.BLACK);
+        Color color = Playground.getColor(value);
+        rectangle.setFill(color);
+        rectangle.setStroke((color.equals(Color.BLACK) ? Color.WHITE : Color.BLACK));
+        text.setFill(getTextColor(color));
         text.setText(Integer.toString(value));
         getChildren().addAll(rectangle, text);
         this.value = value;
+    }
+
+    private Color getTextColor(Color color) {
+        double limit = (double) 0xA0 / 0xFF;
+        if (color.getRed() < limit && color.getGreen() < limit && color.getBlue() < limit) {
+            return Color.WHITE;
+        }
+        return Color.BLACK;
     }
 
     public void setSize(double size) {
@@ -38,9 +47,9 @@ public class BlockShape extends StackPane {
 
     private double getFontSize(double blockSize) {
         if (value < 10_000) {
-            return blockSize / 3;
+            return blockSize / 3.5;
         } else if (value < 100_000) {
-            return blockSize / 4;
+            return blockSize / 4.5;
         } else {
             return blockSize / 5;
         }

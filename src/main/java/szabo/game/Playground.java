@@ -13,15 +13,15 @@ import java.util.stream.Collectors;
 public class Playground extends StackPane {
     // TODO use different colors
     private final static String[] hexCodes = new String[]{
-            "#FFE285", "#FFCD29", "#FFA333", "#ED6542", "#FC9FBE", "#A778FF",
-            "#6D4DFF", "#61ABFF", "#1F87FF", "#00D483", "#20AD00", "#126100",
-            "#8C2800", "#660000", "#870063", "#510061", "#510061", "#20488C"
+            "#FFEBCC", "#F2B179", "#FFA333", "#FF6403", "#F23E3E", "#E572C8",
+            "#8F6CE7", "#58B3F4", "#9DFFFD", "#48F2A0", "#38BD0F", "#931010",
+            "#5B0658", "#3A005A", "#001375", "#094014", "#000000"
     };
     private final static HashMap<Integer, Color> colors;
 
     static {
         colors = HashMap.newHashMap(hexCodes.length);
-        int key = 1;
+        int key = 2;
         for (String hexCode : hexCodes) {
             colors.put(key, Color.web(hexCode));
             key <<= 1;
