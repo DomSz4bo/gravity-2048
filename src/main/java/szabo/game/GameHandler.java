@@ -24,13 +24,12 @@ public class GameHandler {
     private static final String GAME_SAVE = "saved_game.dat";
     private static final int NANOS_IN_SECOND = 1_000_000_000;
 
-    private final BooleanProperty existingGameProperty;
-
+    private final AppManager manager;
     private final GamePane gamePane;
-    private GameState gameState = null;
     private final GameLogic gameLogic;
     private final AnimationTimer animationTimer;
-    private final AppManager manager;
+    private final BooleanProperty existingGameProperty;
+    private GameState gameState = null;
 
     public GameHandler(AppManager appManager) {
         super();
@@ -160,13 +159,13 @@ public class GameHandler {
         var dialog = new TextInputDialog();
         dialog.setTitle("Leaderboard");
         String message = "Congratulations, you are on the leaderboard!\n" +
-                "You reached a score of " + score + ".";
+                "You reached an impressive score of " + score + ".";
         if (error != null) {
             message = message + "\n\n" + error;
         }
         dialog.setHeaderText(message);
-        dialog.setContentText("Enter your name:");
-        dialog.setGraphic(null);
+        dialog.setContentText("Enter your name: ");
+        dialog.setGraphic(createGraphic("file:images/leaderboard.png"));
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image("file:images/icon2048-blank.png"));
         var username = dialog.showAndWait();
@@ -177,15 +176,19 @@ public class GameHandler {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game Over");
         alert.setHeaderText("Your final score was " + score + ".");
-        Image img = new Image("file:images/game-over.png");
-        ImageView imageView = new ImageView(img);
-        imageView.setPreserveRatio(true);
-        imageView.setFitWidth(100);
-        alert.setGraphic(imageView);
+        alert.setGraphic(createGraphic("file:images/game-over.png"));
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image("file:images/icon2048-blank.png"));
         alert.getButtonTypes().setAll(ButtonType.FINISH);
         alert.showAndWait();
+    }
+
+    private ImageView createGraphic(String filepath) {
+        Image img = new Image(filepath);
+        ImageView imageView = new ImageView(img);
+        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(100);
+        return imageView;
     }
 
     public GamePane getGamePane() {
