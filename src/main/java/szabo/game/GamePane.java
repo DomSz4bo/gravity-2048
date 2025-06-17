@@ -21,7 +21,6 @@ public class GamePane extends BorderPane {
     private final Playground playground = new Playground();
 
     public GamePane(Runnable onExit) {
-//        scoreLabel.setStyle("-fx-font-size: 25");
         scoreLabel.setMaxWidth(Double.MAX_VALUE);
         scoreLabel.setAlignment(Pos.CENTER);
         HBox.setHgrow(scoreLabel, Priority.ALWAYS);

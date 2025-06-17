@@ -47,6 +47,7 @@ public class GameHandler {
 
         animationTimer = new AnimationTimer() {
             private long lastUpdate;
+
             @Override
             public void start() {
                 super.start();
@@ -188,11 +189,13 @@ public class GameHandler {
     public GamePane getGamePane() {
         return gamePane;
     }
+
     public void saveGameState() {
         if (gameState != null) {
             gameState.save(GAME_SAVE);
         }
     }
+
     public ReadOnlyBooleanProperty existingGameProperty() {
         return existingGameProperty.getReadOnlyProperty();
     }

@@ -1,7 +1,5 @@
 package szabo.game;
 
-import javafx.geometry.Point2D;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -9,12 +7,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-import java.util.HashMap;
-
 
 public class BlockShape extends StackPane {
 
-    private final Rectangle rectangle =  new Rectangle();
+    private final Rectangle rectangle = new Rectangle();
     private final Text text = new Text();
     private final int value;
 
@@ -32,10 +28,11 @@ public class BlockShape extends StackPane {
     }
 
     public void setSize(double size) {
-        double appliedSize = size * 0.97;   // to combat overlap of blocks
+        double borderWidth = 0.02;
+        double appliedSize = size * (1 - 0.02);
         rectangle.setWidth(appliedSize);
         rectangle.setHeight(appliedSize);
-        rectangle.setStrokeWidth(size/100);
+        rectangle.setStrokeWidth(size * borderWidth);
         text.setFont(Font.font("Verdana", FontWeight.BOLD, getFontSize(size)));
     }
 

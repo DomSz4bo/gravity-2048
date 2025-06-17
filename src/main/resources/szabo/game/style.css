@@ -69,6 +69,8 @@
     -fx-text-fill: #CD7F32;
 }
 
-
-
+/* PLAYGROUND */
+.playground-area {
+    -fx-background-color: rgba(141, 187, 255, 0.2);
+}
 

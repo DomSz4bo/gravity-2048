@@ -12,12 +12,13 @@ import java.util.stream.Collectors;
 
 public class Playground extends StackPane {
     // TODO use different colors
-    private final static String[] hexCodes = new String[] {
+    private final static String[] hexCodes = new String[]{
             "#FFE285", "#FFCD29", "#FFA333", "#ED6542", "#FC9FBE", "#A778FF",
             "#6D4DFF", "#61ABFF", "#1F87FF", "#00D483", "#20AD00", "#126100",
             "#8C2800", "#660000", "#870063", "#510061", "#510061", "#20488C"
     };
     private final static HashMap<Integer, Color> colors;
+
     static {
         colors = HashMap.newHashMap(hexCodes.length);
         int key = 1;
@@ -26,6 +27,7 @@ public class Playground extends StackPane {
             key <<= 1;
         }
     }
+
     public static Color getColor(int key) {
         return colors.get(key);
     }
@@ -34,45 +36,30 @@ public class Playground extends StackPane {
     private final HashMap<Integer, BlockShape> blockMap = new HashMap<>();
 
     public Playground() {
-        super();
         getChildren().add(playgroundPane);
-        playgroundPane.setBackground(Background.fill(Color.web("rgba(0, 0, 0, 0.4)")));
+        playgroundPane.getStyleClass().add("playground-area");
+        double wallThickness = GameHandler.WALL_THICKNESS;
         playgroundPane.setBorder(new Border(new BorderStroke(
                 Color.WHITE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY,
                 new BorderWidths(
-                        0, GameHandler.WALL_THICKNESS, GameHandler.WALL_THICKNESS, GameHandler.WALL_THICKNESS,
+                        0, wallThickness, wallThickness, wallThickness,
                         false, true, true, true
                 )
         )));
-        paintDeathLine();
-        fixAspectRatio();
-        testingEvents();
         playgroundPane.widthProperty().addListener(e -> resizeBlocks());
         playgroundPane.setFocusTraversable(true);
-//        playgroundPane.setOnMouseClicked(event -> {
-//            playgroundPane.requestFocus();
-//            System.out.println("playgroundPane");
-//        });
-    }
-
-    // TODO remove after testing
-    private void testingEvents() {
-        playgroundPane.heightProperty().addListener(
-                e -> System.out.println(
-                        "Width to Height: " + playgroundPane.getWidth() / playgroundPane.getHeight()
-                        + "\nWidth=" + playgroundPane.getWidth() + " Height=" + playgroundPane.getHeight()
-                )
-        );
+        paintDeathLine();
+        fixAspectRatio();
     }
 
     private void fixAspectRatio() {
         playgroundPane.maxWidthProperty().bind(Bindings.createDoubleBinding(
                 () -> Math.min(getWidth(), getHeight() * GameHandler.PLAYGROUND_RATIO),
-                widthProperty(),  heightProperty()
+                widthProperty(), heightProperty()
         ));
         playgroundPane.maxHeightProperty().bind(Bindings.createDoubleBinding(
                 () -> Math.min(getHeight(), getWidth() / GameHandler.PLAYGROUND_RATIO),
-                heightProperty(),  widthProperty()
+                heightProperty(), widthProperty()
         ));
     }
 
@@ -92,32 +79,13 @@ public class Playground extends StackPane {
         blockMap.values().forEach(block -> block.setSize(blockSize));
     }
 
-    private void clearUnusedBlocks(Set<Integer> currentBlockIDs) {
-        blockMap.keySet().removeIf(
-                id -> {
-                    if (!currentBlockIDs.contains(id)) {
-                        BlockShape blockShape = blockMap.get(id);
-                        playgroundPane.getChildren().remove(blockShape);
-                        return true;
-                    }
-                    return false;
-                }
-        );
-    }
-    // TODO resizing the Blocks
-    private BlockShape createAndAddBlock(int value, double size) {
-        var block = new BlockShape(value);
-        block.setSize(size);
-        playgroundPane.getChildren().add(block);
-        return block;
-    }
-
     public Pane getPlaygroundPane() {
         return playgroundPane;
     }
 
     public void paintBlocks(List<GameState.BlockState> blocks) {
         clearUnusedBlocks(blocks.stream().map(GameState.BlockState::id).collect(Collectors.toSet()));
+
         double blockSize = GameHandler.BLOCK_SIZE * playgroundPane.getWidth();
         for (GameState.BlockState blockState : blocks) {
             BlockShape visualBlock = blockMap.computeIfAbsent(
@@ -131,6 +99,26 @@ public class Playground extends StackPane {
         }
     }
 
+    private void clearUnusedBlocks(Set<Integer> currentBlockIDs) {
+        blockMap.keySet().removeIf(
+                id -> {
+                    if (!currentBlockIDs.contains(id)) {
+                        BlockShape blockShape = blockMap.get(id);
+                        playgroundPane.getChildren().remove(blockShape);
+                        return true;
+                    }
+                    return false;
+                }
+        );
+    }
+
+    private BlockShape createAndAddBlock(int value, double size) {
+        var block = new BlockShape(value);
+        block.setSize(size);
+        playgroundPane.getChildren().add(block);
+        return block;
+    }
+
     public void runEffect(int blockValue, double posX, double posY) {
         int exp = 31 - Integer.numberOfLeadingZeros(blockValue);
         double mod = Math.min(1, exp / 15.0);
@@ -142,7 +130,7 @@ public class Playground extends StackPane {
         int particleCount = 50 + (int) (200 * mod);
         Confetti confetti = new Confetti(
                 particleSize, particleSize * 2, particleCount, playgroundPane,
-                x , y, radius, travel, getColor(blockValue)
+                x, y, radius, travel, getColor(blockValue)
         );
         confetti.start();
     }
