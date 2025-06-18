@@ -13,11 +13,22 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class responsible for providing the main GUI for controlling the application manager's
+ * basic functions. The basic functions include resuming an existing game or starting a new game,
+ * showing the leaderboard and closing the application.
+ */
 public class MenuPane extends VBox {
 
     private final VBox buttonContainer = new VBox();
     private final List<Button> buttons = new ArrayList<>();
 
+    /**
+     * Initializes the menu GUI - creates necessary buttons, configures element dimensions
+     * font scaling and title image.
+     *
+     * @param appManager the application manager to communicate with
+     */
     public MenuPane(AppManager appManager) {
         Button playButton = new Button("Resume Game");
         Button newGameButton = new Button("New Game");
@@ -67,6 +78,11 @@ public class MenuPane extends VBox {
         }
     }
 
+    /**
+     * Visualizes the buttons.
+     *
+     * @param includeResume whether to include the resume game button
+     */
     public void loadButtons(boolean includeResume) {
         buttonContainer.getChildren().clear();
         if (includeResume) {
@@ -76,10 +92,16 @@ public class MenuPane extends VBox {
         }
     }
 
+    /**
+     * Disables all the buttons in the menu.
+     */
     public void disableButtons() {
         buttons.forEach(btn -> btn.setDisable(true));
     }
 
+    /**
+     * Enables all the buttons in the menu.
+     */
     public void enableButtons() {
         buttons.forEach(btn -> btn.setDisable(false));
     }
