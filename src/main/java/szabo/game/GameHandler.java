@@ -162,7 +162,7 @@ public class GameHandler {
         dialog.setContentText("Enter your name: ");
         dialog.setGraphic(createGraphic("file:images/leaderboard.png"));
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("file:images/icon2048-blank.png"));
+        stage.getIcons().add(new Image("file:images/icon.png"));
         var username = dialog.showAndWait();
         return username.orElse("Anonymous");
     }
@@ -173,7 +173,7 @@ public class GameHandler {
         alert.setHeaderText("Your final score was " + score + ".");
         alert.setGraphic(createGraphic("file:images/game-over.png"));
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("file:images/icon2048-blank.png"));
+        stage.getIcons().add(new Image("file:images/icon.png"));
         alert.getButtonTypes().setAll(ButtonType.FINISH);
         alert.showAndWait();
     }
