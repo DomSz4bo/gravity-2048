@@ -10,6 +10,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Represents the main visual component of the game's user interface where all gameplay occurs.
+ * <p>
+ * This class is responsible for visualizing all the blocks and the play area or playground itself.
+ * The play area has a fixed aspect ratio and remains centered.
+ * </p>
+ */
 public class Playground extends StackPane {
     private final static String[] hexCodes = new String[]{
             "#FFEBCC", "#F2B179", "#FFA333", "#FF6403", "#F23E3E", "#E572C8",
@@ -27,13 +34,25 @@ public class Playground extends StackPane {
         }
     }
 
-    public static Color getColor(int key) {
-        return colors.get(key);
+    /**
+     * Returns the color for the given block value.
+     *
+     * @param blockValue the value to get the color for
+     * @return assigned color
+     */
+    public static Color getColor(int blockValue) {
+        return colors.get(blockValue);
     }
 
     private final Pane playgroundPane = new Pane();
     private final HashMap<Integer, BlockShape> blockMap = new HashMap<>();
 
+    /**
+     * Creates an instance of {@link Playground}.
+     * <p>
+     * Initializes and visualizes the unchanging parts of the play area.
+     * </p>
+     */
     public Playground() {
         getChildren().add(playgroundPane);
         playgroundPane.getStyleClass().add("playground-area");
@@ -78,10 +97,17 @@ public class Playground extends StackPane {
         blockMap.values().forEach(block -> block.setSize(blockSize));
     }
 
+    /**
+     * @return the Pane representing the play area
+     */
     public Pane getPlaygroundPane() {
         return playgroundPane;
     }
 
+    /**
+     * Visualizes the given blocks within the play area.
+     * @param blocks the blocks to visualize
+     */
     public void paintBlocks(List<GameState.BlockState> blocks) {
         clearUnusedBlocks(blocks.stream().map(GameState.BlockState::id).collect(Collectors.toSet()));
 
@@ -118,6 +144,18 @@ public class Playground extends StackPane {
         return block;
     }
 
+    /**
+     * Plays a {@link Confetti} effect at the given position and with
+     * the Color corresponding to the block value.
+     * <p>
+     * Follows the JavaFX coordinate system so
+     * position [0, 0] is the top left corner and [1, 1] is the lower right corner.
+     * </p>
+     *
+     * @param blockValue the block value whose color is used
+     * @param posX the horizontal position as a percentage of the playground's width
+     * @param posY the vertical position as a percentage of the playground's height
+     */
     public void runEffect(int blockValue, double posX, double posY) {
         int exp = 31 - Integer.numberOfLeadingZeros(blockValue);
         double mod = Math.min(1, exp / 15.0);
