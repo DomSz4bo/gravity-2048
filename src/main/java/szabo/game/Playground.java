@@ -106,6 +106,7 @@ public class Playground extends StackPane {
 
     /**
      * Visualizes the given blocks within the play area.
+     *
      * @param blocks the blocks to visualize
      */
     public void paintBlocks(List<GameState.BlockState> blocks) {
@@ -153,8 +154,8 @@ public class Playground extends StackPane {
      * </p>
      *
      * @param blockValue the block value whose color is used
-     * @param posX the horizontal position as a percentage of the playground's width
-     * @param posY the vertical position as a percentage of the playground's height
+     * @param posX       the horizontal position as a percentage of the playground's width
+     * @param posY       the vertical position as a percentage of the playground's height
      */
     public void runEffect(int blockValue, double posX, double posY) {
         int exp = 31 - Integer.numberOfLeadingZeros(blockValue);
