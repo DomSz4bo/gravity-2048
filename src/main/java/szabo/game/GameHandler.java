@@ -66,7 +66,7 @@ public class GameHandler {
         setupMouseControl();
         setupKeyboardControl();
 
-        gameLogic.setOnMerged(
+        gameLogic.addMergeListener(
                 (newValue, posX, posY) ->
                         gamePane.getPlayground().runEffect(newValue, posX, (1 - posY))
         );
@@ -125,11 +125,11 @@ public class GameHandler {
         gamePane.getPlayground().getPlaygroundPane().setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case LEFT -> {
-                    gameLogic.moveBlock(false);
+                    gameLogic.moveBlock(false, 0.01);
                     event.consume();
                 }
                 case RIGHT -> {
-                    gameLogic.moveBlock(true);
+                    gameLogic.moveBlock(true, 0.01);
                     event.consume();
                 }
                 case SPACE, DOWN -> {

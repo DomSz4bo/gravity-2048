@@ -18,14 +18,14 @@ import javafx.scene.text.Font;
 
 /**
  * The class responsible for visualizing leaderboards represented by {@link Leaderboard}.
+ * Consists of a title, scrollable score list and close button.
  */
 public class LeaderboardPane extends BorderPane {
     private final VBox scoreList = new VBox();
     private final DoubleBinding minDimension;
 
     /**
-     * Creates a leaderboard pane. Sets up the necessary elements like
-     * the title, the scroll-able score list and close button.
+     * Creates a leaderboard pane.
      *
      * @param onClose the action to perform when the close button is pressed
      */
