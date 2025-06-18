@@ -14,35 +14,53 @@ import javafx.scene.text.Font;
 
 import java.util.Optional;
 
+/**
+ * This class provides and manages the GUI of the game.
+ * <p>
+ * The GUI is made up of two main portions: the playground and
+ * the information panel above the playground.
+ * </p>
+ * The playground is represented by an instance of {@link Playground}.
+ * The information panel consists of a label showing the closest high score
+ * from the leaderboard, a label showing the current score and finally a
+ * button for returning to the menu.
+ */
 public class GamePane extends BorderPane {
 
     private final Label scoreLabel = new Label();
     private final Label scoreToBeatLabel = new Label();
     private final Playground playground = new Playground();
 
-    public GamePane(Runnable onExit) {
+    /**
+     * Creates an instance of {@link GamePane}.
+     * <p>
+     * Initializes the GUI elements and configures their dimension and font sizes.
+     * </p>
+     *
+     * @param onBackToMenu the operation to perform when returning to the menu
+     */
+    public GamePane(Runnable onBackToMenu) {
         scoreLabel.setMaxWidth(Double.MAX_VALUE);
         scoreLabel.setAlignment(Pos.CENTER);
         HBox.setHgrow(scoreLabel, Priority.ALWAYS);
 
-        var exitButton = new Button("Back to Menu");
-        exitButton.setStyle("-fx-font-size: 25");
-        exitButton.setOnAction(event -> onExit.run());
-        exitButton.paddingProperty().bind(Bindings.createObjectBinding(
+        var backToMenuButton = new Button("Back to Menu");
+        backToMenuButton.setOnAction(event -> onBackToMenu.run());
+        backToMenuButton.paddingProperty().bind(Bindings.createObjectBinding(
                 () -> {
-                    double fontSize = exitButton.getFont().getSize();
+                    double fontSize = backToMenuButton.getFont().getSize();
                     double vPad = fontSize / 6;
                     double hPad = fontSize * 0.8;
                     return new Insets(vPad, hPad, vPad, hPad);
-                }, exitButton.fontProperty()
+                }, backToMenuButton.fontProperty()
         ));
 
-        var scorePane = new HBox(scoreToBeatLabel, scoreLabel, exitButton);
+        var scorePane = new HBox(scoreToBeatLabel, scoreLabel, backToMenuButton);
         scorePane.setAlignment(Pos.CENTER);
         scorePane.paddingProperty().bind(Bindings.createObjectBinding(
                 () -> {
-                    double padding = widthProperty().get()/50;
-                    return new Insets(padding/4, padding, padding/4, padding);
+                    double padding = widthProperty().get() / 50;
+                    return new Insets(padding / 4, padding, padding / 4, padding);
                 }, widthProperty()
         ));
 
@@ -52,10 +70,17 @@ public class GamePane extends BorderPane {
         Platform.runLater(() -> {
             bindFontSize(scoreLabel);
             bindFontSize(scoreToBeatLabel);
-            bindFontSize(exitButton);
+            bindFontSize(backToMenuButton);
         });
     }
 
+    /**
+     * Visualizes the given game state. Updates information labels and visualizes
+     * blocks in the playground.
+     *
+     * @param gameState   the game state to visualize
+     * @param leaderboard the leaderboard to extract the closest score from
+     */
     public void paint(GameState gameState, Leaderboard leaderboard) {
         Optional<Integer> scoreToBeat = findScoreToBeat(gameState.score(), leaderboard);
         String scoreToBeatText = scoreToBeat.map(i -> "Score to beat: " + i)
@@ -71,6 +96,9 @@ public class GamePane extends BorderPane {
                 .findFirst().map(Leaderboard.ScoreEntry::score);
     }
 
+    /**
+     * @return the underlying Playground instance
+     */
     public Playground getPlayground() {
         return playground;
     }
