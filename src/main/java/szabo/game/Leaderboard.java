@@ -145,8 +145,8 @@ public class Leaderboard {
     /**
      * Class representing a single leaderboard entry.
      *
-     * @param name
-     * @param score
+     * @param name  the name of the player
+     * @param score the achieved score
      */
     public record ScoreEntry(String name, int score) {
         private static final int MAX_USERNAME_LENGTH = 15;
@@ -155,7 +155,7 @@ public class Leaderboard {
          * Creates a leaderboard score entry with the given information.
          * Checks whether the name is not longer than {@link #MAX_USERNAME_LENGTH}
          *
-         * @param name the name of the player
+         * @param name  the name of the player
          * @param score the achieved score
          */
         public ScoreEntry {

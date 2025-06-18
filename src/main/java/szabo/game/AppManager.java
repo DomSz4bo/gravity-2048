@@ -4,7 +4,7 @@ import javafx.beans.binding.Bindings;
 import javafx.scene.layout.StackPane;
 
 /**
- * The manager class for the applications elements.
+ * The manager class for the application's elements.
  * The main elements are the menu, game and leaderboard.
  * <p>
  * Handles interactions between elements and
@@ -23,7 +23,7 @@ public class AppManager extends StackPane {
     /**
      * Creates an instance of {@link AppManager}.
      * <p>
-     * Initializes the applications elements. Sets up the necessary interactions
+     * Initializes the application's elements. Sets up the necessary interactions
      * between elements and configures element dimensions.
      * </p>
      */
