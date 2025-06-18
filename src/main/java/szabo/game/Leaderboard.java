@@ -8,7 +8,7 @@ import java.util.Objects;
 
 
 /**
- * Class representing the logical part of the leaderboard.
+ * Represents the logical part of the leaderboard.
  * Keeps track of leaderboard entries and handles saving and loading
  * entries from files.
  */

@@ -16,7 +16,7 @@ import java.util.*;
 
 
 /**
- * This class handles the game's logic. This includes new block generation and positioning,
+ * Handles the game's logic. This includes new block generation and positioning,
  * simulating the physics of block movement and collisions, merging colliding blocks with the same value,
  * checking for game over.
  */

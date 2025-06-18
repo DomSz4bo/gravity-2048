@@ -16,7 +16,7 @@ import java.io.IOException;
 
 
 /**
- * This class handles everything tied to the game itself, that is, game logic and game visualization.
+ * Handles everything tied to the game itself, that is, game logic and game visualization.
  * <p>
  * It manages the interaction between player input in the game GUI and game's logic
  * and also the application manager. It also handles the saving and loading of game data.
