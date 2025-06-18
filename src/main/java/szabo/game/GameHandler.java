@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 
 /**
@@ -204,9 +205,17 @@ public class GameHandler {
         }
         dialog.setHeaderText(message);
         dialog.setContentText("Enter your name: ");
-        dialog.setGraphic(createGraphic("file:images/leaderboard.png"));
+        dialog.setGraphic(createGraphic(
+                Objects.requireNonNull(
+                        getClass().getResource("images/leaderboard.png")
+                ).toExternalForm()
+        ));
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("file:images/icon.png"));
+        stage.getIcons().add(new Image(
+                Objects.requireNonNull(
+                        getClass().getResource("images/icon.png")
+                ).toExternalForm()
+        ));
         var username = dialog.showAndWait();
         return username.orElse("Anonymous");
     }
@@ -215,9 +224,17 @@ public class GameHandler {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game Over");
         alert.setHeaderText("Your final score was " + score + ".");
-        alert.setGraphic(createGraphic("file:images/game-over.png"));
+        alert.setGraphic(createGraphic(
+                Objects.requireNonNull(
+                        getClass().getResource("images/game-over.png")
+                ).toExternalForm()
+        ));
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("file:images/icon.png"));
+        stage.getIcons().add(new Image(
+                Objects.requireNonNull(
+                        getClass().getResource("images/icon.png")
+                ).toExternalForm()
+        ));
         alert.getButtonTypes().setAll(ButtonType.FINISH);
         alert.showAndWait();
     }

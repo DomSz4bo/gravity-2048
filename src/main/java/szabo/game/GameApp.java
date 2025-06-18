@@ -44,7 +44,11 @@ public class GameApp extends Application {
         primaryStage.setMinWidth(MIN_WIDTH);
         primaryStage.setMinHeight(MIN_HEIGHT);
         primaryStage.setTitle("2048");
-        primaryStage.getIcons().add(new Image("file:images/icon.png"));
+        primaryStage.getIcons().add(new Image(
+                Objects.requireNonNull(
+                        getClass().getResource("images/icon.png")
+                ).toExternalForm()
+        ));
         primaryStage.show();
     }
 

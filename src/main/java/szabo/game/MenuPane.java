@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class responsible for providing the main GUI for controlling the application manager's
@@ -54,7 +55,11 @@ public class MenuPane extends VBox {
         getChildren().addAll(titleImage, buttonContainer);
         spacingProperty().bind(minDimension.divide(20));
 
-        Image img = new Image("file:images/logo.png");
+        Image img = new Image(
+                Objects.requireNonNull(
+                        getClass().getResource("images/logo.png")
+                ).toExternalForm()
+        );
         titleImage.setImage(img);
         titleImage.setPreserveRatio(true);
         titleImage.fitWidthProperty().bind(minDimension.divide(2));
