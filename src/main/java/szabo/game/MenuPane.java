@@ -25,8 +25,8 @@ public class MenuPane extends VBox {
         Button exitButton = new Button("Exit");
         ImageView titleImage = new ImageView();
 
-        playButton.setOnAction(e -> appManager.loadGame(true));
-        newGameButton.setOnAction(e -> appManager.loadGame(false));
+        playButton.setOnAction(e -> appManager.startGame(true));
+        newGameButton.setOnAction(e -> appManager.startGame(false));
         leaderboardButton.setOnAction(e -> appManager.showLeaderboard());
         exitButton.setOnAction(e -> Platform.exit());
         buttons.addAll(List.of(playButton, newGameButton, leaderboardButton, exitButton));
