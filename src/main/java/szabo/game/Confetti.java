@@ -12,26 +12,48 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Creates and manages a confetti effect.
+ */
 public class Confetti {
     private static final double DURATION = 600;
     private final Random random = new Random();
     private final double MAX_DISTANCE;
     private final List<ConfettiParticle> particles = new ArrayList<>();
+    private final Pane parent;
 
+    /**
+     * Creates a confetti effect that can be triggered by the {@link #start()} method.
+     *
+     * @param particleWidth  the width of the particles
+     * @param particleHeight the height of the particles
+     * @param count          the number of particle to generate
+     * @param parent         the Pane where the effect should show
+     * @param x              the horizontal center of the effect
+     * @param y              the vertical center of the effect
+     * @param scatter        the amount to scatter the particles at generation
+     * @param maxTravel      the maximum distance travel
+     * @param color          the color of the effect, if it's {@code null}, random colors are used
+     */
     public Confetti(double particleWidth, double particleHeight, int count, Pane parent,
-                    double x, double y, double radius, double maxTravel, Color color) {
+                    double x, double y, double scatter, double maxTravel, Color color) {
         MAX_DISTANCE = maxTravel;
+        this.parent = parent;
         for (int i = 0; i < count; i++) {
-            double px = x + random.nextDouble(-radius, radius);
-            double py = y + random.nextDouble(-radius, radius);
+            double px = x + random.nextDouble(-scatter, scatter);
+            double py = y + random.nextDouble(-scatter, scatter);
             var particle = new ConfettiParticle(px, py, particleWidth, particleHeight, color);
-            parent.getChildren().add(particle);
             particle.onFinishedRemoveFrom(parent);
             particles.add(particle);
         }
     }
 
+    /**
+     * Starts the animation of the effect. Particles are added to and later
+     * removed from the children of the {@code parent} Pane when the animation ends.
+     */
     public void start() {
+        parent.getChildren().addAll(particles);
         particles.forEach(ConfettiParticle::animate);
     }
 
