@@ -15,21 +15,47 @@ import java.io.File;
 import java.io.IOException;
 
 
+/**
+ * This class handles everything tied to the game itself, that is, game logic and game visualization.
+ * <p>
+ * It manages the interaction between player input in the game GUI and game's logic
+ * and also the application manager. It also handles the saving and loading of game data.
+ * </p>
+ */
 public class GameHandler {
-    public static final double PLAYGROUND_RATIO = 0.7;      // width : height
-    public static final double WALL_THICKNESS = 0.01;           // % of Playground
-    public static final double BLOCK_SIZE = 0.23;           // % of Playground Width
-    public static final double LINE_POSITION = 0.3;         // % of playground height
+    /**
+     * Defines the ratio between the playground's width and height.
+     */
+    public static final double PLAYGROUND_RATIO = 0.7;
+    /**
+     * Defines the thickness of the playground's borders as a percentage of the corresponding dimension.
+     */
+    public static final double WALL_THICKNESS = 0.01;
+    /**
+     * Defines the size of blocks as a percentage of the playground's width.
+     */
+    public static final double BLOCK_SIZE = 0.23;
+    /**
+     * Defines the position of the 'game over' line as a percentage of the playground's height.
+     */
+    public static final double LINE_POSITION = 0.3;
+
     private static final String GAME_SAVE = "saved_game.dat";
     private static final int NANOS_IN_SECOND = 1_000_000_000;
 
     private final AppManager manager;
     private final GamePane gamePane;
     private final GameLogic gameLogic;
-    private final AnimationTimer animationTimer;
+    private final AnimationTimer gameLoop;
     private final ReadOnlyBooleanWrapper existingGameProperty;
     private GameState gameState = null;
 
+    /**
+     * Initializes the games logic and GUI. Sets up the interactions
+     * between the GUI, logic and application manager.
+     *
+     * @param appManager the manager to communicate with
+     */
     public GameHandler(AppManager appManager) {
         manager = appManager;
         gamePane = new GamePane(this::returnToMenu);
@@ -45,15 +71,23 @@ public class GameHandler {
                         gamePane.getPlayground().runEffect(newValue, posX, (1 - posY))
         );
 
-        animationTimer = new AnimationTimer() {
+        gameLoop = new AnimationTimer() {
             private long lastUpdate;
 
+            /**
+             * Starts the game loop.
+             */
             @Override
             public void start() {
                 super.start();
                 lastUpdate = System.nanoTime();
             }
 
+            /**
+             * Updates the games logic and visualizes it in the GUI.
+             *
+             * @param now The timestamp of the current frame given in nanoseconds.
+             */
             @Override
             public void handle(long now) {
                 long deltaNanos = now - lastUpdate;
@@ -108,6 +142,13 @@ public class GameHandler {
         });
     }
 
+    /**
+     * Starts the game by starting the game loop that periodically updates the game's logic
+     * and visualizes the game in the GUI.
+     *
+     * @param useExisting if {@code true}, tries to load the last saved game,
+     *                    else loads a new game.
+     */
     public void startGame(boolean useExisting) {
         if (useExisting && gameState == null) {
             try {
@@ -120,11 +161,11 @@ public class GameHandler {
             gameState = null;
             gameLogic.resetLogic();
         }
-        animationTimer.start();
+        gameLoop.start();
     }
 
     private void gameOver() {
-        animationTimer.stop();
+        gameLoop.stop();
         int finalScore = gameState.score();
         showMessageBasedOnScore(finalScore);
         gameState = null;
@@ -186,16 +227,30 @@ public class GameHandler {
         return imageView;
     }
 
+    /**
+     * Returns the main pane of the game GUI.
+     *
+     * @return main game pane
+     */
     public GamePane getGamePane() {
         return gamePane;
     }
 
+    /**
+     * Saves the current state of the game logic, if one exists.
+     */
     public void saveGameState() {
         if (gameState != null) {
             gameState.save(GAME_SAVE);
         }
     }
 
+    /**
+     * Returns the existing game property which tracks whether there is a saved or active
+     * game logic state that can be resumed.
+     *
+     * @return existing game property
+     */
     public ReadOnlyBooleanProperty existingGameProperty() {
         return existingGameProperty.getReadOnlyProperty();
     }
@@ -207,7 +262,7 @@ public class GameHandler {
 
     private void returnToMenu() {
         updateExistingGameProperty();
-        animationTimer.stop();
+        gameLoop.stop();
         manager.showMenu();
     }
 
