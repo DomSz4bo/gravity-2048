@@ -8,12 +8,21 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 
+/**
+ * Provides the visual representation of a block in the playground.
+ */
 public class BlockShape extends StackPane {
 
     private final Rectangle rectangle = new Rectangle();
     private final Text text = new Text();
     private final int value;
 
+    /**
+     * Creates an instance of {@link BlockShape} with the given value and
+     * color corresponding to this value.
+     *
+     * @param value the block's value
+     */
     public BlockShape(int value) {
         if (Playground.getColor(value) == null) {
             throw new IllegalArgumentException("Value " + value + " is not a valid block value.");
@@ -35,6 +44,10 @@ public class BlockShape extends StackPane {
         return Color.BLACK;
     }
 
+    /**
+     * Sets the block's size to the given value.
+     * @param size the desired size
+     */
     public void setSize(double size) {
         double borderWidth = 0.02;
         double appliedSize = size * (1 - 0.02);
@@ -54,12 +67,21 @@ public class BlockShape extends StackPane {
         }
     }
 
+    /**
+     * Positions the block so that it's center is located at the given point.
+     * @param x the horizontal component
+     * @param y the vertical component
+     */
     public void setCenterPosition(double x, double y) {
-        double xPos = x - rectangle.getWidth() / 2;
-        double yPos = y - rectangle.getHeight() / 2;
-        relocate(xPos, yPos);
+        double blockX = x - rectangle.getWidth() / 2;
+        double blockY = y - rectangle.getHeight() / 2;
+        relocate(blockX, blockY);
     }
 
+    /**
+     * Sets the blocks rotation to the angle given in radians.
+     * @param radians the angle to set
+     */
     public void setRotation(double radians) {
         double angle = Math.toDegrees(radians);
         rectangle.setRotate(angle);
