@@ -19,8 +19,6 @@ public class MenuPane extends VBox {
     private final List<Button> buttons = new ArrayList<>();
 
     public MenuPane(AppManager appManager) {
-        super();
-
         Button playButton = new Button("Resume Game");
         Button newGameButton = new Button("New Game");
         Button leaderboardButton = new Button("Leaderboard");

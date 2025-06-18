@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Playground extends StackPane {
-    // TODO use different colors
     private final static String[] hexCodes = new String[]{
             "#FFEBCC", "#F2B179", "#FFA333", "#FF6403", "#F23E3E", "#E572C8",
             "#8F6CE7", "#58B3F4", "#9DFFFD", "#48F2A0", "#38BD0F", "#931010",

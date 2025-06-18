@@ -18,9 +18,6 @@ public class Confetti {
     private final double MAX_DISTANCE;
     private final List<ConfettiParticle> particles = new ArrayList<>();
 
-    // TODO
-    //  * make travel a radius so that it has a circular shape
-    //  * make it so that the Color is corresponding to the Block being created or merged
     public Confetti(double particleWidth, double particleHeight, int count, Pane parent,
                     double x, double y, double radius, double maxTravel, Color color) {
         MAX_DISTANCE = maxTravel;
@@ -33,9 +30,7 @@ public class Confetti {
             particles.add(particle);
         }
     }
-    private Color getRandomColor() {
-        return Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
-    }
+
     public void start() {
         particles.forEach(ConfettiParticle::animate);
     }
@@ -43,6 +38,7 @@ public class Confetti {
     private class ConfettiParticle extends Rectangle {
         private final TranslateTransition translateTransition;
         private final FadeTransition fadeTransition;
+
         private ConfettiParticle(double x, double y, double width, double height, Color color) {
             super(x, y, width, height);
             setFill((color == null) ? getRandomColor() : color);
@@ -60,15 +56,20 @@ public class Confetti {
             fadeTransition = new FadeTransition(Duration.millis(DURATION * 0.3), this);
             fadeTransition.setFromValue(1.0);
             fadeTransition.setToValue(0.0);
-//            fadeTransition.setInterpolator(Interpolator.EASE_OUT);
             fadeTransition.setDelay(Duration.millis(DURATION * 0.7));
         }
+
         private void onFinishedRemoveFrom(Pane parent) {
             translateTransition.setOnFinished(event -> parent.getChildren().remove(this));
         }
+
         private void animate() {
             translateTransition.play();
             fadeTransition.play();
+        }
+
+        private Color getRandomColor() {
+            return Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
         }
     }
 }

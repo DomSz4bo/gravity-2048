@@ -3,6 +3,9 @@ package szabo.game;
 import javafx.beans.binding.Bindings;
 import javafx.scene.layout.StackPane;
 
+/**
+ *
+ */
 public class AppManager extends StackPane {
     private static final String LEADERBOARD_FILE = "leaderboard.dat";
     private static final int LEADERBOARD_LIMIT = 10;

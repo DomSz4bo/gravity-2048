@@ -15,7 +15,6 @@ public class BlockShape extends StackPane {
     private final int value;
 
     public BlockShape(int value) {
-        super();
         if (Playground.getColor(value) == null) {
             throw new IllegalArgumentException("Value " + value + " is not a valid block value.");
         }
