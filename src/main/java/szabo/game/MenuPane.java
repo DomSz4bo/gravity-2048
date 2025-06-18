@@ -24,8 +24,11 @@ public class MenuPane extends VBox {
     private final List<Button> buttons = new ArrayList<>();
 
     /**
+     * Creates a new {@link MenuPane}.
+     * <p>
      * Initializes the menu GUI - creates necessary buttons, configures element dimensions
      * font scaling and title image.
+     * </p>
      *
      * @param appManager the application manager to communicate with
      */

@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 public record GameState(List<BlockState> releasedBlocks,
                         BlockState activeBlock, int score) implements Serializable {
     /**
-     * Creates an instance of GameState and captures the given game state.
+     * Creates an instance of {@link GameState} and captures the given game state.
      *
      * @param releasedBlocks blocks which have been released into the playground
      * @param activeBlock    the last block to be generated (not by merging) and

@@ -21,8 +21,11 @@ public class AppManager extends StackPane {
     private final LeaderboardPane leaderboardPane = new LeaderboardPane(this::showMenu);
 
     /**
+     * Creates an instance of {@link AppManager}.
+     * <p>
      * Initializes the applications elements. Sets up the necessary interactions
      * between elements and configures element dimensions.
+     * </p>
      */
     public AppManager() {
         leaderboardPane.maxWidthProperty().bind(widthProperty().multiply(0.6));

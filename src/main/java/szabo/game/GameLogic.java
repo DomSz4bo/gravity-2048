@@ -94,7 +94,7 @@ public class GameLogic {
     private final Runnable onGameOver;
 
     /**
-     * Creates game logic instance.
+     * Creates an instance of {@link GameLogic}.
      * <p>
      * Initializes game logic, the physics world used for simulating
      * the physics of the game and sets up merging.

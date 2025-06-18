@@ -51,8 +51,11 @@ public class GameHandler {
     private GameState gameState = null;
 
     /**
+     * Creates an instance of {@link GameHandler}.
+     * <p>
      * Initializes the games logic and GUI. Sets up the interactions
      * between the GUI, logic and application manager.
+     * </p>
      *
      * @param appManager the manager to communicate with
      */

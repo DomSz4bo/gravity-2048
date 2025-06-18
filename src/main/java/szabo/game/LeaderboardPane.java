@@ -25,7 +25,7 @@ public class LeaderboardPane extends BorderPane {
     private final DoubleBinding minDimension;
 
     /**
-     * Creates a leaderboard pane.
+     * Creates a new {@link LeaderboardPane}.
      *
      * @param onClose the action to perform when the close button is pressed
      */

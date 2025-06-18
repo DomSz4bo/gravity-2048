@@ -18,7 +18,7 @@ public class Leaderboard {
     private Runnable onChange = null;
 
     /**
-     * Creates a leaderboard by loading entries from the given file.
+     * Creates a new {@link Leaderboard} and loads entries from the given file.
      *
      * @param filepath path to the file. If it's {@code null}, the returned leaderboard will be empty.
      * @param limit a limit on the number of entries to load, must be greater than 0.
