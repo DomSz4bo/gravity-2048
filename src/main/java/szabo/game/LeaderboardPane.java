@@ -16,10 +16,19 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 
+/**
+ * The class responsible for visualizing leaderboards represented by {@link Leaderboard}.
+ */
 public class LeaderboardPane extends BorderPane {
     private final VBox scoreList = new VBox();
     private final DoubleBinding minDimension;
 
+    /**
+     * Creates a leaderboard pane. Sets up the necessary elements like
+     * the title, the scroll-able score list and close button.
+     *
+     * @param onClose the action to perform when the close button is pressed
+     */
     public LeaderboardPane(Runnable onClose) {
         Label title = new Label("Leaderboard");
         title.getStyleClass().add("leaderboard-title");
@@ -70,6 +79,12 @@ public class LeaderboardPane extends BorderPane {
         });
     }
 
+    /**
+     * Update this leaderboard pane's score list with the entries of the given {@link Leaderboard}.
+     * Previous scores from the score list are discarded.
+     *
+     * @param leaderboard the leaderboard to visualize
+     */
     public void updateWith(Leaderboard leaderboard) {
         scoreList.getChildren().clear();
         var entries = leaderboard.getScores();
@@ -92,9 +107,12 @@ public class LeaderboardPane extends BorderPane {
         ));
     }
 
+    /**
+     * The class responsible for visualizing leaderboard entries represented by {@link szabo.game.Leaderboard.ScoreEntry}.
+     */
     private class LeaderboardPaneEntry extends HBox {
 
-        public LeaderboardPaneEntry(Leaderboard.ScoreEntry entry, int rank) {
+        private LeaderboardPaneEntry(Leaderboard.ScoreEntry entry, int rank) {
             super(10);
             var rankLabel = new Label(rank + ".");
             var nameLabel = new Label(entry.name());
