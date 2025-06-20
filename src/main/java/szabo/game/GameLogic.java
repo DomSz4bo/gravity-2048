@@ -24,10 +24,10 @@ public class GameLogic {
     /**
      * Defines what block generation methods to use.
      * If {@code true} only 2 and 4 blocks generate with 90% and 10% probability respectively.
-     * Else blocks with values equal or lower than the highest value among existing block values
-     * are generated with equal probability.
+     * Else blocks with values lower (equal if highest is 2)  than the highest value among
+     * existing block values are generated with equal probability.
      */
-    private static final boolean CLASSIC_GENERATION = true;
+    private static final boolean CLASSIC_GENERATION = false;
 
     // PHYSICS BEHAVIOUR
     /**
@@ -212,8 +212,9 @@ public class GameLogic {
         if (CLASSIC_GENERATION) {
             return random.nextInt(10) < 9 ? 2 : 4;
         } else {
-            int exp = random.nextInt(integerLog2(highestBlockValue)) + 1;
-            return (1 << exp);
+            if (highestBlockValue == 2) return 2;
+            int exp = random.nextInt(1, integerLog2(highestBlockValue));
+            return 1 << exp;
         }
     }
 
