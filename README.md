@@ -29,10 +29,17 @@ The player can control the placement of the block using either a mouse or a keyb
 ## Spúšťanie
 In IntelliJ, run the project through the `GameApp` class.
 
+<table>
+  <tr>
+    <td><img alt="Start screen" src="images/homescreen.png" width="400"></td>
+    <td><img alt="Gameplay screenshot" src="images/gamescreen.png" width="400"></td>
+  </tr>
+</table>
+
 ---
 
 ### Credits
 Illustrations used in endgame dialog windows:
-[Pódium](https://www.freepik.com/icon/podium_7921939)
+[Podium](https://www.freepik.com/icon/podium_7921939)
 and
 [Game Over](https://www.flaticon.com/free-icon/game-over_6851342?term=game+over&page=1&position=3&origin=tag&related_id=6851342).

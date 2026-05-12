@@ -29,6 +29,12 @@ Hráč môže ovládať umiestnenie bloku pomocou myši alebo klávesnice.
 ## Spúšťanie
 V intelliJ spustite projekt cez triedu `GameApp`.
 
+<table>
+  <tr>
+    <td><img alt="Uvítacia obrazovka" src="images/homescreen.png" width="400"></td>
+    <td><img alt="Ukážka z hry" src="images/gamescreen.png" width="400"></td>
+  </tr>
+</table>
 
 ---
 
